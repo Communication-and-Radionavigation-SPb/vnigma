@@ -4,7 +4,6 @@
 
 int main(int, char*[])
 {
-    auto sum = vnigma::add(1, 1);
-    std::cout << sum << std::endl;
+    std::cout << "Base example" << std::endl;
     return 0;
 }
