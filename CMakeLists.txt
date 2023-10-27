@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.14)
 project(vnigma
     VERSION 1.0.0
-    DESCRIPTION "Template for C++ library built with CMake"
+    DESCRIPTION "DAS and Venom modules interaction protocol library built with CMake"
     LANGUAGES CXX)
 
-#----------------------------------------------------------------------------------------------------------------------
-# general settings and options
-#----------------------------------------------------------------------------------------------------------------------
+# /* -------------------------------------------------------------------------- */
+# /*                        General settings and options                        */
+# /* -------------------------------------------------------------------------- */
 
 include(cmake/utils.cmake)
 include(GNUInstallDirs)
@@ -36,15 +36,9 @@ set_if_undefined(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 add_library(vnigma) # initialized below
 add_library(vnigma::vnigma ALIAS vnigma)
 
-#----------------------------------------------------------------------------------------------------------------------
-# vnigma dependencies
-#----------------------------------------------------------------------------------------------------------------------
-
-# Search for your dependencies here
-
-#----------------------------------------------------------------------------------------------------------------------
-# vnigma sources
-#----------------------------------------------------------------------------------------------------------------------
+# /* -------------------------------------------------------------------------- */
+# /*                                   Sources                                  */
+# /* -------------------------------------------------------------------------- */
 
 include(GenerateExportHeader)
 set(export_file_name "export_shared.h")
@@ -55,15 +49,20 @@ endif()
 
 generate_export_header(vnigma EXPORT_FILE_NAME include/vnigma/${export_file_name})
 
+include(cmake/CMakeHelpers.cmake)
+
+add_source_folder(src)
+add_source_folder(include/vnigma)
+add_source_folder(include/vnigma/das)
+
 set(sources
-    include/vnigma/export.h
-    include/vnigma/vnigma.h
-    src/vnigma.cpp)
+    ${VN_HEADER_FILES}
+    ${VN_SOURCE_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 
-#----------------------------------------------------------------------------------------------------------------------
-# vnigma target
-#----------------------------------------------------------------------------------------------------------------------
+# /* -------------------------------------------------------------------------- */
+# /*                               Library target                               */
+# /* -------------------------------------------------------------------------- */
 
 include(CMakePackageConfigHelpers)
 
@@ -137,18 +136,26 @@ if(VNIGMA_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
     endif()
 endif()
 
-#----------------------------------------------------------------------------------------------------------------------
-# other targets
-#----------------------------------------------------------------------------------------------------------------------
+# /* -------------------------------------------------------------------------- */
+# /*                                    Tests                                   */
+# /* -------------------------------------------------------------------------- */
 
 if(VNIGMA_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
 
+# /* -------------------------------------------------------------------------- */
+# /*                                  Examples                                  */
+# /* -------------------------------------------------------------------------- */
+
 if(VNIGMA_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
+
+# /* -------------------------------------------------------------------------- */
+# /*                                Documentation                               */
+# /* -------------------------------------------------------------------------- */
 
 if(VNIGMA_BUILD_DOCS)
     find_package(Doxygen REQUIRED)
