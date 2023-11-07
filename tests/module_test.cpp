@@ -1,6 +1,7 @@
 #include <vnigma/vnigma.h>
 
 #include <gtest/gtest.h>
+#include <string>
 
 #define Suite ModuleTests
 
@@ -8,50 +9,56 @@ TEST(Suite, can_be_instantiated) {
   vnigma::core::Module analog(1, vnigma::core::vn, vnigma::core::analog);
 }
 
-TEST(Suite, creates_analog_das) {
-  vnigma::core::Module analog(1, vnigma::core::das, vnigma::core::analog);
+struct module_pl {
+  std::string verification;
+  vnigma::core::Target target;
+  vnigma::core::Type type;
+  uint8_t id;
+};
 
-  EXPECT_EQ(analog.id, 1);
-  EXPECT_EQ(analog.type, vnigma::core::Type::analog);
-  EXPECT_EQ(analog.target, vnigma::core::Target::das);
+class VnigmaModuleTest : public ::testing::TestWithParam<module_pl> {
+ public:
+  vnigma::core::Module* m_module;
+
+ protected:
+  void SetUp() override {
+    auto param = GetParam();
+    m_module = new vnigma::core::Module(param.id, param.target, param.type);
+  }
+
+  void TearDown() override { delete m_module; }
+};
+
+TEST_P(VnigmaModuleTest, prefix_is_correct) {
+  auto pfx = m_module->prefix();
+  auto param = GetParam();
+  EXPECT_EQ(pfx, param.verification);
 }
 
-TEST(Suite, creates_analog_venom) {
-  vnigma::core::Module analog(1, vnigma::core::das, vnigma::core::analog);
-
-  EXPECT_EQ(analog.id, 1);
-  EXPECT_EQ(analog.type, vnigma::core::Type::analog);
-  EXPECT_EQ(analog.target, vnigma::core::Target::das);
+TEST_P(VnigmaModuleTest, id_is_correct) {
+  auto param = GetParam();
+  EXPECT_EQ(m_module->id(), param.id);
 }
 
-TEST(Suite, creates_serial_das) {
-  vnigma::core::Module serial(1, vnigma::core::das, vnigma::core::serial);
-
-  EXPECT_EQ(serial.id, 1);
-  EXPECT_EQ(serial.type, vnigma::core::Type::serial);
-  EXPECT_EQ(serial.target, vnigma::core::Target::das);
+TEST_P(VnigmaModuleTest, target_is_correct) {
+  auto param = GetParam();
+  EXPECT_EQ(m_module->target(), param.target);
 }
 
-TEST(Suite, creates_serial_venom) {
-  vnigma::core::Module serial(1, vnigma::core::vn, vnigma::core::serial);
+const std::vector<module_pl> entries = {
+    {"DSA", vnigma::core::Target::das, vnigma::core::Type::analog, 1},
+    {"VNA", vnigma::core::Target::vn, vnigma::core::Type::analog, 1},
+    {"DSA", vnigma::core::Target::das, vnigma::core::Type::analog, 2},
+    {"VNA", vnigma::core::Target::vn, vnigma::core::Type::analog, 2},
+    {"DSS", vnigma::core::Target::das, vnigma::core::Type::serial, 1},
+    {"VNS", vnigma::core::Target::vn, vnigma::core::Type::serial, 1},
+    {"DSS", vnigma::core::Target::das, vnigma::core::Type::serial, 2},
+    {"VNS", vnigma::core::Target::vn, vnigma::core::Type::serial, 2},
+    {"DSD", vnigma::core::Target::das, vnigma::core::Type::digital, 1},
+    {"VND", vnigma::core::Target::vn, vnigma::core::Type::digital, 1},
+    {"DSD", vnigma::core::Target::das, vnigma::core::Type::digital, 2},
+    {"VND", vnigma::core::Target::vn, vnigma::core::Type::digital, 2},
+};
 
-  EXPECT_EQ(serial.id, 1);
-  EXPECT_EQ(serial.type, vnigma::core::Type::serial);
-  EXPECT_EQ(serial.target, vnigma::core::Target::vn);
-}
-
-TEST(Suite, creates_digital_das) {
-  vnigma::core::Module digital(3, vnigma::core::das, vnigma::core::digital);
-
-  EXPECT_EQ(digital.id, 3);
-  EXPECT_EQ(digital.type, vnigma::core::Type::digital);
-  EXPECT_EQ(digital.target, vnigma::core::Target::das);
-}
-
-TEST(Suite, creates_digital_venom) {
-  vnigma::core::Module digital(3, vnigma::core::vn, vnigma::core::digital);
-
-  EXPECT_EQ(digital.id, 3);
-  EXPECT_EQ(digital.type, vnigma::core::Type::digital);
-  EXPECT_EQ(digital.target, vnigma::core::Target::vn);
-}
+INSTANTIATE_TEST_SUITE_P(ModuleP, VnigmaModuleTest,
+                         ::testing::ValuesIn(entries));

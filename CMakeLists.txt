@@ -15,7 +15,6 @@ string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}" is_top_
 
 # VNIGMA_SHARED_LIBS option (undefined by default) can be used to force shared/static build
 option(VNIGMA_BUILD_TESTS "Build vnigma tests" OFF)
-option(VNIGMA_BUILD_EXAMPLES "Build vnigma examples" OFF)
 option(VNIGMA_BUILD_DOCS "Build vnigma documentation" OFF)
 option(VNIGMA_INSTALL "Generate target for installing vnigma" ${is_top_level})
 set_if_undefined(VNIGMA_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/vnigma" CACHE STRING
@@ -51,9 +50,15 @@ generate_export_header(vnigma EXPORT_FILE_NAME include/vnigma/${export_file_name
 
 include(cmake/CMakeHelpers.cmake)
 
-add_source_folder(src)
 add_source_folder(include/vnigma)
-add_source_folder(include/vnigma/das)
+add_source_folder(src)
+add_source_folder(include/vnigma/base)
+add_source_folder(include/vnigma/serial)
+add_source_folder(include/vnigma/analog)
+add_source_folder(include/vnigma/digital)
+add_source_folder(src/serial)
+add_source_folder(src/analog)
+add_source_folder(src/digital)
 
 set(sources
     ${VN_HEADER_FILES}
@@ -143,14 +148,6 @@ endif()
 if(VNIGMA_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
-endif()
-
-# /* -------------------------------------------------------------------------- */
-# /*                                  Examples                                  */
-# /* -------------------------------------------------------------------------- */
-
-if(VNIGMA_BUILD_EXAMPLES)
-    add_subdirectory(examples)
 endif()
 
 # /* -------------------------------------------------------------------------- */
