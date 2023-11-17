@@ -13,19 +13,17 @@ std::string type_to_string(const Type& t) noexcept {
   return "U";
 }
 
-Type type_from_string(const std::string& str) {
-
-  if (str.length() == 1) {
-    if (str == "A")
-      return Type::analog;
-    if (str == "D")
-      return Type::digital;
-    if (str == "S")
-      return Type::serial;
-  }
+Type type_from_string(const char ch) {
+  if (ch == 'A')
+    return Type::analog;
+  if (ch == 'D')
+    return Type::digital;
+  if (ch == 'S')
+    return Type::serial;
 
   std::stringstream ss;
-  ss << "Could not extract any known module type from `" << str << "` value";
+  ss << "could not extract any known module type from `" << ch << "` value";
   throw std::invalid_argument(ss.str());
 }
+
 }}  // namespace vnigma::core

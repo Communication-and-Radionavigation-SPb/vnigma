@@ -45,23 +45,18 @@ endif()
 #----------------------------------------------------------------------------------------------------------------------
 
 set(sources
-    mock_t_command.h
-    mock_generator.hpp
-    module_test.cpp
-    type_functions_test.cpp
-    target_conversion_test.cpp
-    command_test.cpp
-    reset_command_test.cpp
-    base_guid_generator_test.cpp
-    serial/set_config_command_test.cpp
-    serial/serial_port_test.cpp
-    digital/types_test.cpp
-    digital/set_frequency_command_test.cpp
-    digital/get_frequency_command_test.cpp
-    analog/analog_port_test.cpp
-    analog/set_config_command_test.cpp
-    analog/set_frequency_command_test.cpp
-    digital_from_string_test.cpp
+    baud_test.cpp
+    control_test.cpp
+    buffer_test.cpp
+    binary_test.cpp
+    message_variant_test.cpp
+    serial_port_test.cpp
+    number_util_test.cpp
+    das_message_test.cpp
+    das_set_frequency_test.cpp
+#    das_set_reset_test.cpp
+#    das_set_config_test.cpp
+    das_get_config_test.cpp
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 
