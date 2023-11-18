@@ -57,10 +57,10 @@ TEST_P(Suite, from_buffer) {
   if (param.code.has_value()) {
     GTEST_SKIP() << "Skip cause should fail";
   }
-
+  std::cout << "[debug]: " << param.buf << std::endl;
   vn::get_config msg(param.buf);
 
-  auto buf = msg.as_buffer();
+  vn::buffer buf = msg.as_buffer();
   EXPECT_EQ(buf, param.buf) << buf << " is not equal to " << param.buf;
 }
 
@@ -91,34 +91,34 @@ INSTANTIATE_TEST_SUITE_P(  // instantiate test suite
         das_gc_p{100, "<DSSGC,100,9\r\n"_mb, vn::device(9, vn::core::serial),
                  std::nullopt},
         das_gc_p{
-            100, "<DSSGC,100,"_mb, vn::device(2, vn::core::serial),
+            100, "<DSSGC,100,\r\n"_mb, vn::device(2, vn::core::serial),
+            //          ^
+            //          device identifier missed
+            errc::bad_message,
+            "vnigma::control_message GC device identifier apsent: Bad message"},
+        das_gc_p{100, "<DSSGC\r\n"_mb, vn::device(2, vn::core::serial),
+                 //          ^
+                 //          device identifier missed
+                 errc::bad_message,
+                 "vnigma::control_message GC message structure is malformed: "
+                 "Bad message"},
+        das_gc_p{
+            100, "<DSSGC,\r\n"_mb, vn::device(2, vn::core::serial),
             //          ^
             //          device identifier missed
             errc::bad_message,
             "vnigma::control_message GC device identifier apsent: Bad message"},
         das_gc_p{
-            100, "<DSSGC"_mb, vn::device(2, vn::core::serial),
-            //          ^
-            //          device identifier missed
-            errc::bad_message,
-            "vnigma::control_message GC device identifier apsent: Bad message"},
-        das_gc_p{
-            100, "<DSSGC,"_mb, vn::device(2, vn::core::serial),
-            //          ^
-            //          device identifier missed
-            errc::bad_message,
-            "vnigma::control_message GC device identifier apsent: Bad message"},
-        das_gc_p{
-            100, "<DSSGC,100"_mb, vn::device(2, vn::core::serial),
+            100, "<DSSGC,100\r\n"_mb, vn::device(2, vn::core::serial),
             //              ^
             //              device identifier missed
             errc::bad_message,
             "vnigma::control_message GC device identifier apsent: Bad message"},
-        das_gc_p{100, "<DS"_mb, vn::device(2, vn::core::serial),
+        das_gc_p{100, "<DS\r\n"_mb, vn::device(2, vn::core::serial),
                  //       ^
                  //    device type missed
-                 errc::bad_message,
-                 "vnigma::control_message GC device type apsent: Bad message"},
+                 errc::protocol_error,
+                 "vnigma::control_message GC no device clarifier: Protocol error"},
         das_gc_p{100, "<DS*GC,100,2\r\n"_mb, vn::device(2, vn::core::serial),
                  //       ^
                  //       wrong device type

@@ -24,84 +24,85 @@ class VNIGMA_EXPORT control_message {
  public:
   control_message(device dev) : device_(dev) {}
 
-  control_message(buffer buf) {
+  control_message(buffer& buf) {
     throw_if_empty(buf, errc::protocol_error, "header is apsent");
     /* ----------------------------- Validate prefix ---------------------------- */
-    buffer::iterator lpos = buf.begin();
-    buffer::iterator rpos = --buf.end();
-    if (*lpos++ != '<') {
+    if (buf.at(0) != '<') {
       error(errc::bad_message, "wrong prefix");
     }
-    if (*rpos-- != '\n') {
+    auto lf_pos = buf.rfind('\n');
+    auto cr_pos = buf.rfind('\r');
+
+    if (lf_pos != (buf.size() - 1)) {
       error(errc::bad_message, "no line ending");
     }
-    if (*rpos-- != '\r') {
+    if (cr_pos != (buf.size() - 2)) {
       error(errc::bad_message, "no carret return");
     }
-    /* ------------------------ validate protocol version ----------------------- */
+    /* ------------------------ retrieve target protocol ------------------------ */
+    std::string protocol = "";
     if constexpr (das_related<Message>()) {
-      if (lpos == buf.end() || buf.compare(lpos - buf.begin(), 2, "DS") != 0) {
-        std::stringstream ss;
-        ss << "invalid protocol version" << buf.substr(lpos, 2);
-        error(errc::protocol_error, ss.str());
-      }
+      protocol = "DS";
     }
-    else {
-      if (lpos == buf.end() || buf.compare(lpos - buf.begin(), 2, "VN") != 0) {
-        std::stringstream ss;
-        ss << "invalid protocol version" << buf.substr(lpos, 2);
-        error(errc::protocol_error, ss.str());
-      }
+    else if constexpr (venom_related<Message>()) {
+      protocol = "VN";
     }
-    lpos = lpos + 2;  // move pos forward
-    // <DSSSD,582,3,2,$GPHDT,127.0,T*ce\r\n
-    //    ^                           ^
-    //    l                           r
+    /* ------------------------ validate protocol version ----------------------- */
+    adjust_left(buf, 1, errc::protocol_error, "no target protocol");
+    adjust_right(buf, 2, errc::protocol_error, "no target protocol");
+    if (buf.compare(0, 2, protocol) != 0) {
+      std::stringstream ss;
+      ss << "invalid protocol version " << buf.substr(0, 2);
+      error(errc::protocol_error, ss.str().c_str());
+    }
     /* -------------------- Validate and extract device type -------------------- */
+    buf.remove_prefix(2);
+    throw_if_empty(buf, errc::protocol_error, "no device clarifier");
     core::Type device_type;
     try {
-      device_type = type_from_string(*lpos++);
+      device_type = type_from_char(buf.at(0));
     } catch (const std::invalid_argument& e) {
       error(errc::bad_message, e.what());
     }
-    // <DSSSD,582,3,2,$GPHDT,127.0,T*ce\r\n
-    //     ^                          ^
-    //     l                          r
-    const auto cmd = control_str<Message>::value;
-    // validate command equals to the type from ^^^^
-    /* ------------------------ validate payload present ------------------------ */
-    if constexpr (has_payload<Message>()) {}
-
-    /* ------------------------- validate uuid if needed ------------------------ */
+    /* ------------------------- validate message format ------------------------ */
+    buf.remove_prefix(1);
+    throw_if_empty(buf, errc::protocol_error, "header is malformed");
+    if (buf.compare(0, 2, control_str<Message>::value) != 0) {
+      error(errc::bad_message, "message format token not matches target one");
+    }
+    /* ------------------------- adjust to next section ------------------------- */
+    buf.remove_prefix(2);
+    throw_if_empty(buf, errc::bad_message, "message structure is malformed");
+    /* ----------------------------- searching ptrs ----------------------------- */
+    buffer::size_type lpos = 0;
+    buffer::size_type rpos = 0;
+    /* ---------------------- verify uuid present if needed --------------------- */
     if constexpr (das_related<Message>()) {
-      lpos = std::min(buf.find(','), buf.size());  // find left bound of uid
-      rpos = std::min(buf.find(',', lpos + 1),
-                      buf.size());  // find right bound of uid
-      if (lpos == buffer::npos || rpos == buffer::npos || lpos == rpos) {
+      rpos = std::min(buf.find(',', lpos + 1), buf.size());
+      // find right bound of uid
+      if (buf.at(lpos) != ',' || rpos == buffer::npos) {
         error(errc::bad_message, "uuid apsent");
       }
       lpos = rpos;
     }
     /* --------------------- validate and extract device id --------------------- */
-    if (lpos == buffer::npos || buf.size() <= (lpos + 1)) {
-      error(errc::bad_message, "device identifier apsent");
-    }
-    buf.remove_prefix(lpos + 1);  // forget everything before device id
+    uint64_t devid = 0;
+    {
+      rpos = std::min(buf.find_first_of(",", lpos + 1),
+                      buf.size());                   // find right bound
+      auto sub = buf.substr(lpos + 1, rpos - lpos - 1);  // content
 
-    rpos = buf.find_first_of(",\r");  // find right bound
+      char* p;
+      std::string idstr{sub.begin(), sub.size()};
 
-    auto sub = buf.substr(0, rpos);  // content
+      devid = std::strtoul(idstr.c_str(), &p, 10);
+      if (*p != 0 || idstr.empty()) {
+        error(errc::bad_message, "device identifier apsent");
+      }
+      lpos = rpos;
+    };
 
-    char* p;
-    std::string idstr{sub.begin(), sub.size()};
-    uint8_t id = std::strtoul(idstr.c_str(), &p, 10);
-    if (*p != 0 || idstr.empty()) {
-      error(errc::bad_message, "could not extract device identifier");
-    }
-    device_ = device(id, device_type);
-
-    buf.remove_prefix(rpos);
-
+    device_ = device(devid, device_type);
     /* ----------------- validate has port field (empty or not) ----------------- */
     if constexpr (is_port_missed<Message>() || is_port_scoped<Message>()) {
 
@@ -116,18 +117,38 @@ class VNIGMA_EXPORT control_message {
   }
 
  private:
-  [[noreturn]] void error(errc ec, const std::string& error) {
+  /**
+   * @brief throws system_error with code and content
+   * passed as params
+   * @throws always
+   * @param ec error code
+   * @param error description of failure
+   */
+  void error(errc ec, const char* error) {
     constexpr auto type = control_str<Message>::value;
     std::stringstream ss;
     ss << "vnigma::control_message " << type << " " << error;
     throw make_error(ec, ss.str());
   }
-  void throw_if_empty(buffer& buf, errc ec, const std::string& ctnt) {
+  void throw_if_empty(buffer& buf, errc ec, const char* ctnt) {
     if (buf.empty()) {
       error(ec, ctnt);
     }
   }
-
+  void adjust_left(buffer& buf, buffer::size_type size, errc ec,
+                   const char* cntnt) {
+    if (buf.size() < size) {
+      error(ec, cntnt);
+    }
+    buf.remove_prefix(size);
+  }
+  void adjust_right(buffer& buf, buffer::size_type size, errc ec,
+                    const char* cntnt) {
+    if (buf.size() < size) {
+      error(ec, cntnt);
+    }
+    buf.remove_suffix(size);
+  }
   /* -------------------------------- As buffer ------------------------------- */
  protected:
   /**

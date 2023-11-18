@@ -52,6 +52,7 @@ set(sources
     message_variant_test.cpp
     serial_port_test.cpp
     number_util_test.cpp
+    control_message.cpp
     das_message_test.cpp
     das_set_frequency_test.cpp
 #    das_set_reset_test.cpp

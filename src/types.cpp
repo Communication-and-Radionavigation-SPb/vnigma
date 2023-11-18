@@ -13,7 +13,7 @@ std::string type_to_string(const Type& t) noexcept {
   return "U";
 }
 
-Type type_from_string(const char ch) {
+Type type_from_char(const char ch) {
   if (ch == 'A')
     return Type::analog;
   if (ch == 'D')

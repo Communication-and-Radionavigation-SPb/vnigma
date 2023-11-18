@@ -216,16 +216,16 @@ class buffer {
 
   /* ---------------------------------- RFind --------------------------------- */
   constexpr size_type rfind(buffer const& buf,
-                            size_type pos = 0) const noexcept {
+                            size_type pos = npos) const noexcept {
     return view_.rfind(buf.view_, pos);
   }
 
   constexpr size_type rfind(std::string_view const& sv,
-                            size_type pos) const noexcept {
+                            size_type pos = npos) const noexcept {
     return view_.rfind(sv, pos);
   }
 
-  constexpr size_type rfind(char ch, size_type pos = 0) const noexcept {
+  constexpr size_type rfind(char ch, size_type pos = npos) const noexcept {
     return view_.rfind(ch, pos);
   }
 
@@ -234,7 +234,7 @@ class buffer {
     return view_.rfind(s, pos, count);
   }
 
-  constexpr size_type rfind(char const* s, size_type pos = 0) const {
+  constexpr size_type rfind(char const* s, size_type pos = npos) const {
     return view_.rfind(s, pos);
   }
   /* ------------------------------- Find first ------------------------------- */
@@ -263,16 +263,17 @@ class buffer {
 
   /* -------------------------------- Find last ------------------------------- */
   constexpr size_type find_last_of(buffer const& buf,
-                                   size_type pos = 0) const noexcept {
+                                   size_type pos = npos) const noexcept {
     return view_.find_last_of(buf.view_, pos);
   }
 
   constexpr size_type find_last_of(std::string_view v,
-                                   size_type pos = 0) const noexcept {
+                                   size_type pos = npos) const noexcept {
     return view_.find_last_of(v, pos);
   }
 
-  constexpr size_type find_last_of(char ch, size_type pos = 0) const noexcept {
+  constexpr size_type find_last_of(char ch,
+                                   size_type pos = npos) const noexcept {
     return view_.find_last_of(ch, pos);
   }
 
@@ -281,7 +282,7 @@ class buffer {
     return view_.find_last_of(s, pos, count);
   }
 
-  constexpr size_type find_last_of(char const* s, size_type pos = 0) const {
+  constexpr size_type find_last_of(char const* s, size_type pos = npos) const {
     return view_.find_last_of(s, pos);
   }
   /* ----------------------------- Find first not ----------------------------- */
@@ -311,17 +312,17 @@ class buffer {
   }
   /* ----------------------------- Find last not ----------------------------- */
   constexpr size_type find_last_not_of(buffer const& buf,
-                                       size_type pos = 0) const noexcept {
+                                       size_type pos = npos) const noexcept {
     return view_.find_last_not_of(buf.view_, pos);
   }
 
   constexpr size_type find_last_not_of(std::string_view v,
-                                       size_type pos = 0) const noexcept {
+                                       size_type pos = npos) const noexcept {
     return view_.find_last_not_of(v, pos);
   }
 
   constexpr size_type find_last_not_of(char ch,
-                                       size_type pos = 0) const noexcept {
+                                       size_type pos = npos) const noexcept {
     return view_.find_last_not_of(ch, pos);
   }
 
@@ -330,7 +331,8 @@ class buffer {
     return view_.find_last_not_of(s, pos, count);
   }
 
-  constexpr size_type find_last_not_of(char const* s, size_type pos = 0) const {
+  constexpr size_type find_last_not_of(char const* s,
+                                       size_type pos = npos) const {
     return view_.find_last_not_of(s, pos);
   }
   /* ------------------------------- Conversion ------------------------------- */
