@@ -27,31 +27,50 @@ class VNIGMA_EXPORT control_message {
   control_message(buffer buf) {
     throw_if_empty(buf, errc::protocol_error, "header is apsent");
     /* ----------------------------- Validate prefix ---------------------------- */
-    if (buf.at(0) != '<') {
+    buffer::iterator lpos = buf.begin();
+    buffer::iterator rpos = --buf.end();
+    if (*lpos++ != '<') {
       error(errc::bad_message, "wrong prefix");
     }
-    if (buf.at(buf.size() - 1) != '\n') {
+    if (*rpos-- != '\n') {
       error(errc::bad_message, "no line ending");
     }
-    if (buf.at(buf.size() - 2) != '\r') {
+    if (*rpos-- != '\r') {
       error(errc::bad_message, "no carret return");
     }
-    buf = buf.substr(1, buf.size() - 2);  // ^<(.*)\r\n$ -> $1
-
-    buffer::size_type lpos = 2;
-    buffer::size_type rpos = 2;
-
+    /* ------------------------ validate protocol version ----------------------- */
+    if constexpr (das_related<Message>()) {
+      if (lpos == buf.end() || buf.compare(lpos - buf.begin(), 2, "DS") != 0) {
+        std::stringstream ss;
+        ss << "invalid protocol version" << buf.substr(lpos, 2);
+        error(errc::protocol_error, ss.str());
+      }
+    }
+    else {
+      if (lpos == buf.end() || buf.compare(lpos - buf.begin(), 2, "VN") != 0) {
+        std::stringstream ss;
+        ss << "invalid protocol version" << buf.substr(lpos, 2);
+        error(errc::protocol_error, ss.str());
+      }
+    }
+    lpos = lpos + 2;  // move pos forward
+    // <DSSSD,582,3,2,$GPHDT,127.0,T*ce\r\n
+    //    ^                           ^
+    //    l                           r
     /* -------------------- Validate and extract device type -------------------- */
     core::Type device_type;
     try {
-      device_type = type_from_string(buf.at(lpos++));
+      device_type = type_from_string(*lpos++);
     } catch (const std::invalid_argument& e) {
       error(errc::bad_message, e.what());
     }
+    // <DSSSD,582,3,2,$GPHDT,127.0,T*ce\r\n
+    //     ^                          ^
+    //     l                          r
+    const auto cmd = control_str<Message>::value;
+    // validate command equals to the type from ^^^^
     /* ------------------------ validate payload present ------------------------ */
-    if constexpr(has_payload<Message>()) {
-      
-    }
+    if constexpr (has_payload<Message>()) {}
 
     /* ------------------------- validate uuid if needed ------------------------ */
     if constexpr (das_related<Message>()) {
