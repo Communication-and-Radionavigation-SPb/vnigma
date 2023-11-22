@@ -3,7 +3,9 @@
 /* ----------------------------------- STD ---------------------------------- */
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <typeinfo>
 #include <vector>
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/buffer.hpp>
@@ -29,35 +31,29 @@ class data {
 };
 }  // namespace serial
 
-namespace analog {
-/* ----------------------------- Analog data ----------------------------- */
-
-/**
- * @brief Analog response data
- * 
- * @tparam Quantity Amount of valuable fields which represents port values
- */
-template <std::size_t Quantity>
+namespace base {
+template <typename value_type, std::size_t Quantity,
+          typename = std::enable_if_t<std::is_same_v<value_type, int> ||
+                                      std::is_same_v<value_type, bool>>>
 class base_data {
   static_assert(Quantity != 0);
 
  public:
-  using container_t = std::vector<int>;
-  using value_type = container_t::value_type;
+  using container_t = std::vector<value_type>;
 
-  using iterator = container_t::iterator;
-  using const_iterator = container_t::iterator;
+  using iterator = typename container_t::iterator;
+  using const_iterator = typename container_t::iterator;
 
-  using reverse_iterator = container_t::reverse_iterator;
-  using const_reverse_iterator = container_t::const_reverse_iterator;
+  using reverse_iterator = typename container_t::reverse_iterator;
+  using const_reverse_iterator = typename container_t::const_reverse_iterator;
 
-  using reference = container_t::reference;
-  using const_reference = container_t::const_reference;
+  using reference = typename container_t::reference;
+  using const_reference = typename container_t::const_reference;
 
-  using pointer = container_t::pointer;
-  using const_pointer = container_t::const_pointer;
+  using pointer = typename container_t::pointer;
+  using const_pointer = typename container_t::const_pointer;
 
-  using size_type = container_t::size_type;
+  using size_type = typename container_t::size_type;
 
   static constexpr std::size_t quantity = Quantity;
 
@@ -69,29 +65,17 @@ class base_data {
     if (buf.size() == 0) {
       throw make_error(errc::bad_message, "");
     }
-    buffer::size_type lpos = 0;
-    buffer::size_type rpos = buffer::npos;
     container_t values;
 
-    while (lpos < buf.size()) {
-      rpos = std::min(buf.find_first_of(',', lpos), buf.size());
-      uint64_t value;
-      try {
-        value = util::toInteger(buf.substr(lpos, rpos - lpos));
-      } catch (const std::exception& e) {
-        throw make_error(
-            errc::bad_message,
-            "vnigma::analog::base_data(buffer) invalid analog data contents");
-      }
-
-      values.push_back(value);
-      lpos = rpos + 1;
-    }
+    extract(values, buf);
 
     if (values.size() != quantity) {
-      throw make_error(
-          errc::bad_message,
-          "vnigma::analog::base_data(buffer) invalid analog data quantity");
+
+      std::stringstream ss;
+      ss << "vnigma::base_data<" << quantity << "," << typeid(value_type).name()
+         << ">"
+         << "invalid data quantity";
+      throw make_error(errc::bad_message, ss.str());
     }
     std::cout << "[result] ";
     for (auto&& i : values) {
@@ -113,6 +97,29 @@ class base_data {
     assert(v.size() == quantity);
   }
 
+ private:
+  template <typename = std::enable_if_t<std::is_same_v<value_type, int>>>
+  void extract(container_t& values, buffer& buf) {
+    buffer::size_type lpos = 0;
+    buffer::size_type rpos = buffer::npos;
+    while (lpos < buf.size()) {
+      rpos = std::min(buf.find_first_of(',', lpos), buf.size());
+      uint64_t value;
+      try {
+        value = util::toInteger(buf.substr(lpos, rpos - lpos));
+        values.push_back(value);
+      } catch (const std::exception& e) {
+        std::stringstream ss;
+        ss << "vnigma::base_data<" << quantity << ","
+           << typeid(value_type).name() << ">"
+           << "invalid contents data";
+        throw make_error(errc::bad_message, ss.str());
+      }
+
+      lpos = rpos + 1;
+    }
+  }
+
  public:
   size_type size() const noexcept { return data_.size(); }
 
@@ -122,24 +129,26 @@ class base_data {
 
   value_type at(size_type pos) { return data_.at(pos); }
 };
+}  // namespace base
 
-using data = base_data<8>;
+namespace analog {
+/* ----------------------------- Analog data ----------------------------- */
+
+/**
+ * @brief Analog response data
+ * 
+ * @tparam Quantity Amount of valuable fields which represents port values
+ */
+
+using data = base::base_data<int, 8>;
 }  // namespace analog
 
 namespace digital {
 /* ----------------------------- Digital data ---------------------------- */
-template <std::size_t Quantity>
-class data {
- private:
-  buffer payload_;
-  std::vector<int8_t> values_;
-
- public:
-  data(buffer buf) : payload_(buf), values_(Quantity) {}
-
- public:
-  buffer value() const { return payload_; }
-};
+/**
+ * @brief Digital ports data representation
+ */
+using data = base::base_data<bool, 16>;
 }  // namespace digital
 
 }  // namespace vnigma
