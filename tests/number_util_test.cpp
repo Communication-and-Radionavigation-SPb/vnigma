@@ -78,4 +78,6 @@ INSTANTIATE_TEST_SUITE_P(NumberUtil, toIntegerTest,
                                            int_number_p{"1 ", 0, true},
                                            int_number_p{"10", 10, false},
                                            int_number_p{"19", 19, false},
-                                           int_number_p{"1234", 1234, false}));
+                                           int_number_p{"1234", 1234, false},
+                                           int_number_p{"0", 0, false},
+                                           int_number_p{"00", 0, false}));

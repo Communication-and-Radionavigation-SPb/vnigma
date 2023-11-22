@@ -12,7 +12,7 @@ class base {
 
  protected:
   base(uuid id);
-  base(buffer buf);
+  base(buffer& buf);
 
  public:
   uuid get_uuid() const;

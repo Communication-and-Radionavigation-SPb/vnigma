@@ -13,6 +13,7 @@ class set_reset;
 class set_frequency;
 class set_config;
 class get_config;
+class send_data;
 }  // namespace das
 
 template <typename Message>
@@ -20,7 +21,8 @@ constexpr bool das_related() {
   return std::is_same_v<das::set_reset, Message> ||
          std::is_same_v<das::set_frequency, Message> ||
          std::is_same_v<das::get_config, Message> ||
-         std::is_same_v<das::set_config, Message>;
+         std::is_same_v<das::set_config, Message> ||
+         std::is_same_v<das::send_data, Message>;
 }
 
 template <typename Message>
@@ -43,13 +45,15 @@ constexpr bool is_port_scoped() {
 
 template <typename Message>
 constexpr bool is_port_missed() {
-  return std::is_same_v<das::set_frequency, Message>;
+  return std::is_same_v<das::set_frequency, Message> ||
+         std::is_same_v<das::send_data, Message>;
 }
 
 template <typename Message>
 constexpr bool has_payload() {
   return std::is_same_v<das::set_frequency, Message> ||
-         std::is_same_v<das::set_config, Message>;
+         std::is_same_v<das::set_config, Message> ||
+         std::is_same_v<das::send_data, Message>;
 }
 
 template <typename Message>
@@ -59,7 +63,7 @@ constexpr bool is_message_variant() {
 
 template <typename Message>
 constexpr bool is_response() {
-  return false;
+  return std::is_same_v<das::send_data, Message>;
 }
 }  // namespace vnigma
 

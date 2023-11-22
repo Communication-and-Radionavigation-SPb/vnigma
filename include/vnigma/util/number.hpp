@@ -36,14 +36,15 @@ inline double toDouble(const std::string_view& s) {
   return result;
 }
 
-inline int64_t toInteger(const std::string_view& s, int radix = 10) {
-  if (s.empty()) {
+inline int64_t toInteger(const std::string_view& sv, int radix = 10) {
+  if (sv.empty()) {
     std::stringstream ss;
     ss << "vnigma::util::toInteger can not make integer from empty source";
     throw std::invalid_argument(ss.str());
   }
 
   char* p;
+  std::string s{sv.begin(), sv.size()};
   int64_t d = std::strtoll(s.data(), &p, radix);
 
   if (*p != 0) {
@@ -55,6 +56,20 @@ inline int64_t toInteger(const std::string_view& s, int radix = 10) {
 
   return d;
 }
+
+inline bool isInteger(const std::string_view& s) {
+  if (s.empty())
+    return false;
+
+  auto it = s.begin();
+  while (it != s.end()) {
+    if (!std::isdigit(*it) && *it != '-')
+      return false;
+    it++;
+  }
+  return true;
+}
+
 }}  // namespace vnigma::util
 
 #endif  // VNIGMA_UTIL_NUMBER_HPP

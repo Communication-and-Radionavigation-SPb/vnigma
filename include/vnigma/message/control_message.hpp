@@ -3,7 +3,6 @@
 
 /* ----------------------------------- STD ---------------------------------- */
 #include <cctype>
-#include <iostream>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -15,6 +14,7 @@
 #include <vnigma/buffer.hpp>
 #include <vnigma/control_type.hpp>
 #include <vnigma/message/message_traits.hpp>
+#include <vnigma/util/number.hpp>
 
 namespace vnigma { namespace core {
 
@@ -48,11 +48,11 @@ class VNIGMA_EXPORT control_message {
       protocol = "VN";
     }
     /* ------------------------ validate protocol version ----------------------- */
-    adjust_left(buf, 1, errc::protocol_error, "no target protocol");
-    adjust_right(buf, 2, errc::protocol_error, "no target protocol");
+    adjust_left(buf, 1, errc::bad_message, "message is too short");
+    adjust_right(buf, 2, errc::bad_message, "message is too short");
     if (buf.compare(0, 2, protocol) != 0) {
       std::stringstream ss;
-      ss << "invalid protocol version " << buf.substr(0, 2);
+      ss << "invalid protocol version '" << buf.substr(0, 2) << "'";
       error(errc::protocol_error, ss.str().c_str());
     }
     /* -------------------- Validate and extract device type -------------------- */
@@ -66,7 +66,7 @@ class VNIGMA_EXPORT control_message {
     }
     /* ------------------------- validate message format ------------------------ */
     buf.remove_prefix(1);
-    throw_if_empty(buf, errc::protocol_error, "header is malformed");
+    throw_if_empty(buf, errc::bad_message, "format token apsent");
     if (buf.compare(0, 2, control_str<Message>::value) != 0) {
       error(errc::bad_message, "message format token not matches target one");
     }
@@ -78,41 +78,77 @@ class VNIGMA_EXPORT control_message {
     buffer::size_type rpos = 0;
     /* ---------------------- verify uuid present if needed --------------------- */
     if constexpr (das_related<Message>()) {
-      rpos = std::min(buf.find(',', lpos + 1), buf.size());
+      // validate delimeter
+      if (buf.at(lpos) != ',') {
+        error(errc::bad_message, "message is malformed");
+      }
       // find right bound of uid
-      if (buf.at(lpos) != ',' || rpos == buffer::npos) {
+      rpos = std::min(buf.find(',', lpos + 1), buf.size());
+      auto sub = buf.substr(lpos + 1, rpos - lpos - 1);
+      // verify uuid present
+      if (sub.empty()) {
         error(errc::bad_message, "uuid apsent");
+      }
+      // verify contents
+      if (!util::isInteger(sub)) {
+        error(errc::bad_message, "uuid invalid");
       }
       lpos = rpos;
     }
     /* --------------------- validate and extract device id --------------------- */
     uint64_t devid = 0;
     {
-      rpos = std::min(buf.find_first_of(",", lpos + 1),
-                      buf.size());                   // find right bound
+      if (lpos == buf.size()) {
+        error(errc::bad_message, "device identifier apsent");
+      }
+      // find right bound
+      rpos = std::min(buf.find_first_of(",", lpos + 1), buf.size());
       auto sub = buf.substr(lpos + 1, rpos - lpos - 1);  // content
-
+      if (sub.empty()) {
+        error(errc::bad_message, "device identifier empty");
+      }
       char* p;
       std::string idstr{sub.begin(), sub.size()};
 
       devid = std::strtoul(idstr.c_str(), &p, 10);
-      if (*p != 0 || idstr.empty()) {
-        error(errc::bad_message, "device identifier apsent");
+      if (*p != 0) {
+        error(errc::bad_message, "device identifier invalid");
       }
       lpos = rpos;
     };
-
     device_ = device(devid, device_type);
     /* ----------------- validate has port field (empty or not) ----------------- */
     if constexpr (is_port_missed<Message>() || is_port_scoped<Message>()) {
-
-      // TODO:
+      if (lpos == buf.size()) {
+        error(errc::bad_message, "port field missed");
+      }
+      rpos = std::min(buf.find_first_of(',', lpos + 1), buf.size());
     }
+    if constexpr (is_port_missed<Message>()) {
+      if (!buf.substr(lpos + 1, rpos - lpos - 1).empty()) {
+        error(errc::bad_message, "invalid port field");
+      }
+    }
+    if constexpr (is_port_scoped<Message>()) {
+      auto sub = buf.substr(lpos + 1, rpos - lpos - 1);
+      if (sub.empty()) {
+        error(errc::bad_message, "port field empty");
+      }
+      if (!util::isInteger(sub)) {
+        error(errc::bad_message, "invalid port field");
+      }
+    }
+    lpos = rpos;
 
     /* ------------------- validate that payload is presented ------------------- */
     /*                      if message marked as payloadfull                      */
     if constexpr (has_payload<Message>()) {
-      // TODO:
+      if (lpos == buf.size()) {
+        error(errc::bad_message, "payload apsent");
+      }
+      if (buf.substr(lpos + 1, buf.size() - lpos).empty()) {
+        error(errc::bad_message, "payload empty");
+      }
     }
   }
 

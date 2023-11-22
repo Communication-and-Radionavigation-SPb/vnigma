@@ -2,6 +2,7 @@
 #define VNIGMA_BUFFER_H
 
 #include <any>
+#include <iterator>
 #include <string_view>
 #include <vnigma/util/iterator_traits.hpp>
 #include <vnigma/util/move.hpp>
@@ -36,10 +37,10 @@ class buffer {
   constexpr buffer(char const* s) : view_(s) {}
 
   template <typename It, typename End,
-            typename std::enable_if_t<is_input_iterator_v<It> &&
-                                      is_input_iterator_v<End>>* = nullptr>
+            typename std::enable_if_t<is_input_iterator<It>::value &&
+                                      is_input_iterator<End>::value>* = nullptr>
   constexpr buffer(It first, End last)
-      : view_(&*first, &*first + std::distance(first, last)) {}
+      : view_{&*first, &*first + std::distance(first, last)} {}
 
   explicit constexpr buffer(std::string_view sv) : view_(sv) {}
 

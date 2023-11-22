@@ -45,6 +45,7 @@ endif()
 #----------------------------------------------------------------------------------------------------------------------
 
 set(sources
+    mock_devices.hpp
     baud_test.cpp
     control_test.cpp
     buffer_test.cpp
@@ -52,12 +53,14 @@ set(sources
     message_variant_test.cpp
     serial_port_test.cpp
     number_util_test.cpp
-    control_message.cpp
+    control_message_test.cpp
     das_message_test.cpp
     das_set_frequency_test.cpp
-#    das_set_reset_test.cpp
-#    das_set_config_test.cpp
+    das_set_reset_test.cpp
+    das_set_config_test.cpp
     das_get_config_test.cpp
+    das_send_data.cpp
+    payload_test.cpp
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 

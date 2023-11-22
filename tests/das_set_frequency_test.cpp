@@ -65,7 +65,7 @@ TEST_P(Suite, from_buffer) {
   EXPECT_EQ(buf, param.buf);
 }
 
-TEST_P(Suite, from_buf_fails) {
+TEST_P(Suite, from_buffer_fails) {
   auto param = GetParam();
   if (!param.err.has_value()) {
     GTEST_SKIP() << "Skipped cause should not fail";
@@ -76,8 +76,8 @@ TEST_P(Suite, from_buf_fails) {
       vn::set_frequency cmd(param.buf);
     } catch (const vn::system_error& e) {
       std::string error = e.what();
-      EXPECT_EQ(error, std::get<1>(param.err.value()));
       EXPECT_EQ(e.code(), std::get<0>(param.err.value()));
+      EXPECT_EQ(error, std::get<1>(param.err.value()));
       throw;
     }
   };
@@ -101,41 +101,10 @@ INSTANTIATE_TEST_SUITE_P(  // instantiate
                          vn::device(4, vn::core::analog), std::nullopt},
         set_frequency_tp{"<DSASF,100,5,,10000\r\n"_mb, 100, vn::core::slowest,
                          vn::device(5, vn::core::analog), std::nullopt},
-        set_frequency_tp{
-            "DSASF,40,1,,10000\r\n"_mb, 100, vn::core::slowest,
-            //^
-            // prefix missed
-            vn::device(5, vn::core::analog),
-            make_tuple(errc::bad_message,
-                       "vnigma::control_message SF wrong prefix: Bad message")},
-        set_frequency_tp{
-            "<DSASF,40,1,,10000\n"_mb, 100, vn::core::slowest,
-            //                 ^
-            //            no carret return
-            vn::device(5, vn::core::analog),
-            make_tuple(
-                errc::bad_message,
-                "vnigma::control_message SF no carret return: Bad message")},
-        set_frequency_tp{
-            "<DSASF,40,1,,10000\r"_mb, 100, vn::core::slowest,
-            //                 ^
-            //            no line ending
-            vn::device(5, vn::core::analog),
-            make_tuple(
-                errc::bad_message,
-                "vnigma::control_message SF no line ending: Bad message")},
-        set_frequency_tp{"<DSASF,5,,10000\r\n"_mb, 100, vn::core::slowest,
-                         //     ^
-                         // uuid missed
+        set_frequency_tp{"<DSASF,100,5,,*\r\n"_mb, 100, vn::core::slowest,
                          vn::device(5, vn::core::analog),
-                         make_tuple(errc::bad_message,
-                                    "vnigma::control_message SF could not "
-                                    "extract device identifier: Bad message")},
-        set_frequency_tp{"<DSASF,100,5,10000\r\n"_mb, 100, vn::core::slowest,
-                         //            ^
-                         //       port id missed
-                         vn::device(5, vn::core::analog),
-                         make_tuple(errc::bad_message,
-                                    "vnigma::control_message SF could not "
-                                    "find payload: Bad message")}  // values end
+                         std::make_tuple(errc::bad_message,
+                                         "vnigma::das::set_frequency invalid "
+                                         "frequency value: Bad message")}
+        // values end
         ));

@@ -2,21 +2,50 @@
 #include <vnigma/message/message_traits.hpp>
 #include <vnigma/message/message_variant.hpp>
 
-#define Suite SetResetTests
+namespace vn {
+using namespace vnigma;
+using vnigma::das::set_reset;
+}  // namespace vn
 
-namespace vn = vnigma;
+using namespace vnigma::literals;
 
-TEST(Suite, type_is_correct) {
-  vn::device dev(1, vn::core::analog);
+struct das_sr_p {
+  vn::uuid uid;
+  vn::buffer buf;
+  vn::device dev;
+};
 
-  EXPECT_TRUE(vnigma::is_command<vnigma::set_reset>());
-  EXPECT_FALSE(vnigma::is_response<vnigma::set_reset>());
-  EXPECT_FALSE(vnigma::has_payload<vnigma::set_reset>());
-  EXPECT_FALSE(vnigma::is_port_missed<vnigma::set_reset>());
-  EXPECT_FALSE(vnigma::is_port_scoped<vnigma::set_reset>());
+class SetResetTest : public ::testing::TestWithParam<das_sr_p> {};
 
-  vnigma::set_reset msg(dev);
-
-  std::string type = vnigma::control_str<msg.type>::value;
-  EXPECT_EQ(type, "SR");
+TEST_F(SetResetTest, traits) {
+  EXPECT_TRUE(vn::is_command<vn::set_reset>());
+  EXPECT_FALSE(vn::is_response<vn::set_reset>());
+  EXPECT_FALSE(vn::has_payload<vn::set_reset>());
+  EXPECT_FALSE(vn::is_port_missed<vn::set_reset>());
+  EXPECT_FALSE(vn::is_port_scoped<vn::set_reset>());
 }
+
+TEST_P(SetResetTest, as_buffer) {
+  auto param = GetParam();
+  vn::set_reset cmd(param.uid, param.dev);
+
+  auto buf = cmd.as_buffer();
+  EXPECT_EQ(buf, param.buf) << buf << " is not equal to " << param.buf;
+}
+
+TEST_P(SetResetTest, from_buffer) {
+  auto param = GetParam();
+
+  vn::set_reset cmd(param.buf);
+
+  auto buf = cmd.as_buffer();
+  EXPECT_EQ(buf, param.buf);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DasSetReset, SetResetTest,
+    ::testing::Values(
+        das_sr_p{100, "<DSSSR,100,1\r\n"_mb, vn::device(1, vn::core::serial)},
+        das_sr_p{100, "<DSASR,100,1\r\n"_mb, vn::device(1, vn::core::analog)},
+        das_sr_p{100, "<DSDSR,100,1\r\n"_mb,
+                 vn::device(1, vn::core::digital)}));

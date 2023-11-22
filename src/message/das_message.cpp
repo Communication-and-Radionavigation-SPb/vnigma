@@ -5,7 +5,7 @@
 namespace vnigma { namespace das {
 base::base(uuid id) : id_(id) {}
 
-base::base(buffer buf) : id_(0) {
+base::base(buffer& buf) : id_(0) {
   if (buf.empty()) {
     error(errc::bad_message, "can not be created from empty buffer");
   }
@@ -17,6 +17,9 @@ base::base(buffer buf) : id_(0) {
   if (lpos == buffer::npos || rpos == buffer::npos || uidbuf.size() == 0) {
     error(errc::bad_message, "uuid part missed");
   }
+
+  // trim uuid section
+  buf = buf.substr(rpos + 1);
 
   uint64_t uid;
 

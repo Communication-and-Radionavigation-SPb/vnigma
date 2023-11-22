@@ -3,9 +3,10 @@
 
 /* ----------------------------------- STD ---------------------------------- */
 /* -------------------------------- Internal -------------------------------- */
-#include <vnigma/ports/serial_port.h>
-#include <vnigma/message/control_message.hpp>
 #include <vnigma/message/das_message.h>
+#include <vnigma/ports/serial_port.h>
+#include <vnigma/buffer.hpp>
+#include <vnigma/message/control_message.hpp>
 #include <vnigma/util/move.hpp>
 /* -------------------------------------------------------------------------- */
 /*                             Set config command                             */
@@ -32,10 +33,14 @@ class set_config : public core::control_message<set_config>, public base {
   set_config(uuid id, device dev, uint8_t index);
   set_config(uuid id, device dev, uint8_t index, uint8_t configuration);
 
+  set_config(buffer buf);
+
  public:
   void set_port(port_t p);
   std::string port() const;
   std::string payload() const;
+
+  buffer as_buffer();
 };
 }}  // namespace vnigma::das
 
