@@ -6,7 +6,10 @@
 /* ----------------------------------- STD ---------------------------------- */
 #include <optional>
 /* -------------------------------- Internal -------------------------------- */
+#include <vnigma/message/das_ack.h>
 #include <vnigma/message/das_get_config.h>
+#include <vnigma/message/das_greed_send_data.h>
+#include <vnigma/message/das_scoped_send_data.h>
 #include <vnigma/message/das_set_config.h>
 #include <vnigma/message/das_set_frequency.h>
 #include <vnigma/message/das_set_reset.h>
@@ -88,8 +91,10 @@ class message_variant {
   operator bool() { return var_.index() != 0; }
 
  private:
-  using variant_t = variant<system_error, das::set_frequency, das::set_reset,
-                            das::set_config, das::get_config>;
+  using variant_t =
+      variant<system_error, das::set_frequency, das::set_reset, das::set_config,
+              das::get_config, das::greed_send_data, das::scoped_send_data,
+              das::ack>;
 
   variant_t var_;
 };

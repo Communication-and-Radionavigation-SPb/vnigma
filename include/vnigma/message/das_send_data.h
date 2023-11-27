@@ -2,10 +2,12 @@
 #define VNIGMA_MESSAGE_ANALOG_SEND_DATA_H
 
 /* ----------------------------------- STD ---------------------------------- */
+#include <optional>
 #include <vector>
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/message/das_message.h>
 #include <vnigma/buffer.hpp>
+#include <vnigma/data.hpp>
 #include <vnigma/message/control_message.hpp>
 
 /* -------------------------------------------------------------------------- */
@@ -15,17 +17,23 @@
 namespace vnigma {
 /* --------------------------- Send data response --------------------------- */
 namespace das {
+using std::optional;
+/**
+ * @brief base class for all send data messages
+ * should not be used in real code
+ */
+class send_data {
+ protected:
+  send_data(data_variant data);
+  send_data(buffer buf, Type target_type);
 
-class send_data : public core::control_message<send_data>, public base {
  public:
-  send_data(uuid id, device dev);
-  send_data(buffer buf);
+  virtual std::string payload();
 
- public:
-  std::string payload();
-
-  buffer as_buffer();
+ private:
+  optional<data_variant> var_;
 };
+
 }  // namespace das
 }  // namespace vnigma
 

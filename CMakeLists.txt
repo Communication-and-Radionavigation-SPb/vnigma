@@ -56,6 +56,7 @@ add_source_folder(include/vnigma/util)
 add_source_folder(include/vnigma/message)
 add_source_folder(include/vnigma/ports)
 add_source_folder(src)
+add_source_folder(src/util)
 add_source_folder(src/message)
 add_source_folder(src/ports)
 

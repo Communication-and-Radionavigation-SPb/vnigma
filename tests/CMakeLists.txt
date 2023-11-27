@@ -50,6 +50,7 @@ set(sources
     control_test.cpp
     buffer_test.cpp
     binary_test.cpp
+    buffer_manip_test.cpp
     message_variant_test.cpp
     serial_port_test.cpp
     number_util_test.cpp
@@ -59,8 +60,12 @@ set(sources
     das_set_reset_test.cpp
     das_set_config_test.cpp
     das_get_config_test.cpp
-    das_send_data.cpp
+    das_sd_p.h
+    das_greed_send_data_test.cpp
+    das_scoped_send_data_test.cpp
     payload_test.cpp
+    das_ack_test.cpp
+    buffer_to_message_variant_test.cpp
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 

@@ -8,8 +8,11 @@ namespace vn = vnigma;
 namespace vnd = vnigma::das;
 
 TEST(Suite, value) {
-  std::string send_data = vn::control_str<vnd::send_data>::value;
-  EXPECT_TRUE(send_data == "SD");
+  std::string greed_send_data = vn::control_str<vnd::greed_send_data>::value;
+  EXPECT_TRUE(greed_send_data == "SD");
+
+  std::string scoped_send_data = vn::control_str<vnd::scoped_send_data>::value;
+  EXPECT_TRUE(scoped_send_data == "SD");
 
   std::string set_frequency = vn::control_str<vnd::set_frequency>::value;
   EXPECT_TRUE(set_frequency == "SF");
@@ -22,4 +25,7 @@ TEST(Suite, value) {
 
   std::string get_config = vn::control_str<vnd::get_config>::value;
   EXPECT_TRUE(get_config == "GC");
+
+  std::string ack = vn::control_str<vnd::ack>::value;
+  EXPECT_TRUE(ack == "AK");
 }
