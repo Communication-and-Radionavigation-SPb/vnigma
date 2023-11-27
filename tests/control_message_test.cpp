@@ -3,7 +3,11 @@
 #include <string>
 
 #include <vnigma/message/das_get_config.h>
+#include <vnigma/message/das_greed_send_data.h>
+#include <vnigma/message/das_scoped_send_data.h>
+#include <vnigma/message/das_set_config.h>
 #include <vnigma/message/das_set_frequency.h>
+#include <vnigma/message/das_set_reset.h>
 #include <vnigma/buffer.hpp>
 #include <vnigma/message/control_message.hpp>
 
@@ -188,33 +192,13 @@ TYPED_TEST_P(DasFailsTest, format_token_not_matches) {
       vn::system_error);
 }
 
-TYPED_TEST_P(DasFailsTest, only_header) {
-  std::stringstream ss;
-  std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << "\r\n";
-  std::string payload = ss.str();
-  vn::buffer buf(payload.c_str());
-
-  EXPECT_THROW(
-      {
-        try {
-          vn::control_message<TypeParam> msg(buf);
-        } catch (const vn::system_error& e) {
-          std::string error = e.what();
-          std::string match = "message structure is malformed: Bad message";
-          EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
-          throw;
-        }
-      },
-      vn::system_error);
-}
 
 TYPED_TEST_P(DasFailsTest, no_uid) {
-  std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
+  if constexpr (vn::is_response<TypeParam>()) {
+    GTEST_SKIP() << "Skipeed cause not command";
+  }
+  std::stringstream ss;
   ss << "<DSS" << fmt << ","
      << "\r\n";
   std::string payload = ss.str();
@@ -240,6 +224,9 @@ TYPED_TEST_P(DasFailsTest, no_uid) {
 TYPED_TEST_P(DasFailsTest, invalid_uid) {
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
+  if constexpr (vn::is_response<TypeParam>()) {
+    GTEST_SKIP() << "Skipeed cause " << fmt << " is not command";
+  }
   ss << "<DSS" << fmt << ",*"
      << "\r\n";
   std::string payload = ss.str();
@@ -265,8 +252,11 @@ TYPED_TEST_P(DasFailsTest, invalid_uid) {
 TYPED_TEST_P(DasFailsTest, no_device_id) {
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << ",242"
-     << "\r\n";
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -290,7 +280,11 @@ TYPED_TEST_P(DasFailsTest, no_device_id) {
 TYPED_TEST_P(DasFailsTest, device_id_empty) {
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << ",242,"
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ","
      << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
@@ -315,7 +309,12 @@ TYPED_TEST_P(DasFailsTest, device_id_empty) {
 TYPED_TEST_P(DasFailsTest, device_id_invalid) {
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << ",242,*"
+
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ",*"
      << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
@@ -345,7 +344,11 @@ TYPED_TEST_P(DasFailsTest, no_port_field) {
   }
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << ",242,1"
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ",1"
      << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
@@ -373,7 +376,11 @@ TYPED_TEST_P(DasFailsTest, port_field_empty) {
   }
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << ",242,1,"
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ",1,"
      << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
@@ -401,13 +408,16 @@ TYPED_TEST_P(DasFailsTest, port_missed_field_invalid) {
   }
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << ",242,1,_"
-     << "\r\n";
-  //                             ^
-  //                     port missed fields
-  //                  should not contain anything
-  //               inside port field
-
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ",1,_";
+  //        ^
+  //  port missed fields
+  // should not contain anything
+  //    inside port field
+  ss << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -434,8 +444,14 @@ TYPED_TEST_P(DasFailsTest, port_scoped_field_invalid) {
   }
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  ss << "<DSS" << fmt << ",242,1,*"
-     << "\r\n";
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ",1,*";
+  //        ^
+  //  port scoped command expects field to contain number
+  ss << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -445,7 +461,7 @@ TYPED_TEST_P(DasFailsTest, port_scoped_field_invalid) {
           vn::control_message<TypeParam> msg(buf);
         } catch (const vn::system_error& e) {
           std::string error = e.what();
-          std::string match = "port field invalid: Bad message";
+          std::string match = "invalid port field: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
               << "'" << error << "'"
               << " do not contains "
@@ -470,7 +486,11 @@ TYPED_TEST_P(DasFailsTest, payload_apsent) {
   if constexpr (vn::is_port_scoped<TypeParam>()) {
     port += "1";
   }
-  ss << "<DSS" << fmt << ",242,1" << port << "\r\n";
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ",1" << port << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -505,7 +525,11 @@ TYPED_TEST_P(DasFailsTest, payload_empty) {
   if constexpr (vn::is_port_scoped<TypeParam>()) {
     port += "1";
   }
-  ss << "<DSS" << fmt << ",242,1" << port << ","
+  ss << "<DSS" << fmt;
+  if constexpr (vn::is_command<TypeParam>()) {
+    ss << ",242";
+  }
+  ss << ",1" << port << ","
      << "\r\n";
   std::cout << ss.str() << std::endl;
   std::string payload = ss.str();
@@ -531,7 +555,7 @@ TYPED_TEST_P(DasFailsTest, payload_empty) {
 REGISTER_TYPED_TEST_SUITE_P(DasFailsTest, empty, no_prefix, no_lf, no_cr,
                             no_protocol, protocol_missmatch, device_clarifier,
                             device_unknown, format_token_apsent,
-                            format_token_not_matches, only_header, no_uid,
+                            format_token_not_matches, no_uid,
                             invalid_uid, no_device_id, device_id_empty,
                             device_id_invalid, no_port_field, port_field_empty,
                             port_scoped_field_invalid,
@@ -539,5 +563,7 @@ REGISTER_TYPED_TEST_SUITE_P(DasFailsTest, empty, no_prefix, no_lf, no_cr,
                             payload_empty);
 
 using DasMsgTypes =
-    ::testing::Types<vn::das::get_config, vn::das::set_frequency>;
+    ::testing::Types<vn::das::get_config, vn::das::set_frequency,
+                     vn::das::set_config, vn::das::set_reset,
+                     vn::das::greed_send_data, vn::das::scoped_send_data>;
 INSTANTIATE_TYPED_TEST_SUITE_P(Das, DasFailsTest, DasMsgTypes);

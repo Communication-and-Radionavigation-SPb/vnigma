@@ -1,25 +1,25 @@
 #include <vnigma/message/das_message.h>
+#include <vnigma/util/buffer_manip.h>
 #include <sstream>
 #include <vnigma/util/number.hpp>
 
 namespace vnigma { namespace das {
 base::base(uuid id) : id_(id) {}
 
-base::base(buffer& buf) : id_(0) {
+base::base(buffer& income) : id_(0) {
+  auto buf = skip(income, 1);
   if (buf.empty()) {
     error(errc::bad_message, "can not be created from empty buffer");
   }
-  auto lpos = std::min(buf.find_first_of(',') + 1, buf.size());
-  auto rpos = std::max(buf.find_first_of(",", lpos), lpos);
+
+  buffer::size_type lpos = 0;
+  buffer::size_type rpos = std::max(buf.find_first_of(",", lpos), lpos);
 
   auto uidbuf = buf.substr(lpos, rpos - lpos);
 
   if (lpos == buffer::npos || rpos == buffer::npos || uidbuf.size() == 0) {
     error(errc::bad_message, "uuid part missed");
   }
-
-  // trim uuid section
-  buf = buf.substr(rpos + 1);
 
   uint64_t uid;
 

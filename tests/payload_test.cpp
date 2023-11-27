@@ -63,6 +63,17 @@ TEST_F(DigitalDataTest, base_quantity) {
 
 TEST_F(DigitalDataTest, from_buffer) {
 
+  EXPECT_THROW({ vn::digital::data data("44"_mb); }, vn::system_error);
+  EXPECT_THROW({ vn::digital::data data("44ED22"_mb); }, vn::system_error);
+
+  vn::buffer buf = "44ED"_mb;
+  vn::digital::data data(buf);
+  std::vector<bool> expectation = {
+      true,  false, true, true,  false, true,  true, true,
+      false, false, true, false, false, false, true, false,
+  };
+
+  EXPECT_TRUE(std::equal(data.begin(), data.end(), expectation.begin()));
 }
 
 TEST_F(DigitalDataTest, constructor) {
@@ -84,4 +95,22 @@ TEST_F(DigitalDataTest, constructor) {
   EXPECT_TRUE(std::equal(data1.begin(), data1.end(), expectation.begin()));
   EXPECT_TRUE(std::equal(data2.begin(), data2.end(), expectation.begin()));
   EXPECT_TRUE(std::equal(data3.begin(), data3.end(), expectation.begin()));
+}
+
+class SerialDataTest : public ::testing::Test {};
+
+TEST_F(SerialDataTest, constructor) {
+  std::string str = "$GPHDT,127.0,T*DE";
+  std::string_view sv{str};
+  vn::buffer buf(sv);
+  vn::serial::data data(buf);
+
+  EXPECT_EQ(data.value(), buf);
+}
+
+TEST_F(SerialDataTest, from_buffer) {
+  vn::buffer buf = "$GPHDT,127.0,T*DE";
+  vn::serial::data data(buf);
+
+  EXPECT_EQ(data.value(), buf);
 }

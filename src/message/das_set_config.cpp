@@ -1,5 +1,5 @@
 #include <vnigma/message/das_set_config.h>
-#include <iostream>
+#include <vnigma/util/buffer_manip.h>
 #include <sstream>
 #include <vnigma/buffer.hpp>
 #include <vnigma/util/number.hpp>
@@ -20,16 +20,16 @@ set_config::set_config(uuid id, device dev, uint8_t index,
 
 set_config::set_config(buffer buf)
     : core::control_message<set_config>(buf), base(buf), p_(0, 0xfc) {
+  // remove terminating simbols
+  buf = trim_buffer(buf);
+  // skip header and uid
+  buf = skip(buf, 3);
   // declare bounding variables
   buffer::size_type rpos, lpos = rpos = 0;
-  // find first comma which represents
-  // left bound of port identifier
-  lpos = buf.find_first_of(',');
   // right bound of port identifier
-  rpos = buf.find_first_of(',', lpos + 1);
-
+  rpos = buf.find_first_of(',');
   // get port index
-  uint8_t index = util::toInteger(buf.substr(lpos + 1, rpos - lpos - 1));
+  uint8_t index = util::toInteger(buf.substr(lpos, rpos));
   lpos = rpos;
   // get port config
   uint8_t configuration = util::toInteger(buf.substr(lpos + 1, buf.size()), 16);

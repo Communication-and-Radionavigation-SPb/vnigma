@@ -24,7 +24,8 @@ class VNIGMA_EXPORT control_message {
  public:
   control_message(device dev) : device_(dev) {}
 
-  control_message(buffer& buf) {
+  control_message(buffer& income) {
+    auto buf = income.substr();
     throw_if_empty(buf, errc::protocol_error, "header is apsent");
     /* ----------------------------- Validate prefix ---------------------------- */
     if (buf.at(0) != '<') {
@@ -72,12 +73,11 @@ class VNIGMA_EXPORT control_message {
     }
     /* ------------------------- adjust to next section ------------------------- */
     buf.remove_prefix(2);
-    throw_if_empty(buf, errc::bad_message, "message structure is malformed");
     /* ----------------------------- searching ptrs ----------------------------- */
     buffer::size_type lpos = 0;
     buffer::size_type rpos = 0;
     /* ---------------------- verify uuid present if needed --------------------- */
-    if constexpr (das_related<Message>()) {
+    if constexpr (das_related<Message>() && !is_response<Message>()) {
       // validate delimeter
       if (buf.at(lpos) != ',') {
         error(errc::bad_message, "message is malformed");
@@ -222,6 +222,8 @@ class VNIGMA_EXPORT control_message {
     return allocate_buffer(result);
   }
 
+  Type target_type() const { return device_.value().type(); }
+
  private:
   std::ostream& as_buffer(Message& message, std::ostream& ss) {
     constexpr auto type = control_str<Message>::value;
@@ -234,7 +236,7 @@ class VNIGMA_EXPORT control_message {
 
     ss << core::type_to_string(device_.value().type()) << type;
 
-    if constexpr (das_related<Message>()) {
+    if constexpr (das_related<Message>() && is_command<Message>()) {
       ss << "," << message.get_uuid();
     }
 
