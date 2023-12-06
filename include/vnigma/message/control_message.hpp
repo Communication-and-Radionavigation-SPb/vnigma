@@ -152,6 +152,48 @@ class VNIGMA_EXPORT control_message {
     }
   }
 
+  Type target_type() const { return device_.value().type(); }
+
+  device device() const { return device_.value(); }
+  /* -------------------------------- As buffer ------------------------------- */
+ protected:
+  /**
+   * @brief  convert message to buffer
+   * 
+   * @tparam Message message type
+   * @param message Message to be converted.
+   * @throws std::runtime_error If passed message can not be converted
+   *                            to buffer
+   * @return buffer command buffer representation
+   */
+  buffer as_buffer(Message message) {
+    if constexpr (!is_message_variant<Message>()) {  // #message_validation
+      static_assert(is_command<Message>() || is_response<Message>(),
+                    "Message can not be converted to buffer");
+    }
+
+    std::stringstream ss;
+
+    if constexpr (is_message_variant<Message>()) {
+      message.visit(overload{[&](auto& actual)
+                             {
+                               // translate actual message to string
+                               as_buffer(message, ss);
+                             },
+                             [](system_error&)
+                             {
+                               // will never be called
+                               // because of #message_validation
+                             }});
+    }
+    else {
+      as_buffer(message, ss);
+    }
+
+    std::string result = ss.str();
+    return allocate_buffer(result);
+  }
+
  private:
   /**
    * @brief throws system_error with code and content
@@ -185,46 +227,7 @@ class VNIGMA_EXPORT control_message {
     }
     buf.remove_suffix(size);
   }
-  /* -------------------------------- As buffer ------------------------------- */
- protected:
-  /**
-   * @brief  convert message to buffer
-   * 
-   * @tparam Message message type
-   * @param message Message to be converted.
-   * @throws std::runtime_error If passed message can not be converted
-   *                            to buffer
-   * @return buffer command buffer representation
-   */
-  buffer as_buffer(Message message) {
-    if constexpr (!is_message_variant<Message>()) {  // #message_validation
-      static_assert(is_command<Message>() || is_response<Message>(),
-                    "Message can not be converted to buffer");
-    }
 
-    std::stringstream ss;
-
-    if constexpr (is_message_variant<Message>()) {
-      message.visit(overload{[&](auto& actual) {
-                               // translate actual message to string
-                               as_buffer(message, ss);
-                             },
-                             [](system_error&) {
-                               // will never be called
-                               // because of #message_validation
-                             }});
-    }
-    else {
-      as_buffer(message, ss);
-    }
-
-    std::string result = ss.str();
-    return allocate_buffer(result);
-  }
-
-  Type target_type() const { return device_.value().type(); }
-
- private:
   std::ostream& as_buffer(Message& message, std::ostream& ss) {
     constexpr auto type = control_str<Message>::value;
     // Compose with target module protocol and device properties
