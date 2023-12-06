@@ -12,6 +12,8 @@ class scoped_send_data : public core::control_message<scoped_send_data>,
   scoped_send_data(uint8_t index, device dev, data_variant data);
   scoped_send_data(buffer buf);
 
+  virtual ~scoped_send_data() = default;
+
  public:
   buffer as_buffer();
 
