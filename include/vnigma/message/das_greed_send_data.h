@@ -15,6 +15,8 @@ class greed_send_data : public core::control_message<greed_send_data>,
   greed_send_data(device dev, data_variant data);
   greed_send_data(buffer buf);
 
+  virtual ~greed_send_data() = default;
+
  public:
   buffer as_buffer();
 
