@@ -152,9 +152,42 @@ class VNIGMA_EXPORT control_message {
     }
   }
 
-  Type target_type() const { return device_.value().type(); }
+ public:
+  device get_device() const { return device_.value(); }
 
-  device device() const { return device_.value(); }
+ private:
+  /**
+   * @brief throws system_error with code and content
+   * passed as params
+   * @throws always
+   * @param ec error code
+   * @param error description of failure
+   */
+  void error(errc ec, const char* error) {
+    constexpr auto type = control_str<Message>::value;
+    std::stringstream ss;
+    ss << "vnigma::control_message " << type << " " << error;
+    throw make_error(ec, ss.str());
+  }
+  void throw_if_empty(buffer& buf, errc ec, const char* ctnt) {
+    if (buf.empty()) {
+      error(ec, ctnt);
+    }
+  }
+  void adjust_left(buffer& buf, buffer::size_type size, errc ec,
+                   const char* cntnt) {
+    if (buf.size() < size) {
+      error(ec, cntnt);
+    }
+    buf.remove_prefix(size);
+  }
+  void adjust_right(buffer& buf, buffer::size_type size, errc ec,
+                    const char* cntnt) {
+    if (buf.size() < size) {
+      error(ec, cntnt);
+    }
+    buf.remove_suffix(size);
+  }
   /* -------------------------------- As buffer ------------------------------- */
  protected:
   /**
@@ -194,40 +227,9 @@ class VNIGMA_EXPORT control_message {
     return allocate_buffer(result);
   }
 
- private:
-  /**
-   * @brief throws system_error with code and content
-   * passed as params
-   * @throws always
-   * @param ec error code
-   * @param error description of failure
-   */
-  void error(errc ec, const char* error) {
-    constexpr auto type = control_str<Message>::value;
-    std::stringstream ss;
-    ss << "vnigma::control_message " << type << " " << error;
-    throw make_error(ec, ss.str());
-  }
-  void throw_if_empty(buffer& buf, errc ec, const char* ctnt) {
-    if (buf.empty()) {
-      error(ec, ctnt);
-    }
-  }
-  void adjust_left(buffer& buf, buffer::size_type size, errc ec,
-                   const char* cntnt) {
-    if (buf.size() < size) {
-      error(ec, cntnt);
-    }
-    buf.remove_prefix(size);
-  }
-  void adjust_right(buffer& buf, buffer::size_type size, errc ec,
-                    const char* cntnt) {
-    if (buf.size() < size) {
-      error(ec, cntnt);
-    }
-    buf.remove_suffix(size);
-  }
+  Type target_type() const { return device_.value().type(); }
 
+ private:
   std::ostream& as_buffer(Message& message, std::ostream& ss) {
     constexpr auto type = control_str<Message>::value;
     // Compose with target module protocol and device properties

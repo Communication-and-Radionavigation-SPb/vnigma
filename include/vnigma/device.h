@@ -40,6 +40,11 @@ class device {
   * @return Type type
   */
   Type type() const noexcept;
+
+ public:
+  bool operator==(const device& other) const {
+    return id_ == other.id_ && type_ == other.type_;
+  }
 };
 }  // namespace vnigma
 
