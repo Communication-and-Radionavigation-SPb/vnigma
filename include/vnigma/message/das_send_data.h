@@ -28,7 +28,7 @@ class send_data {
   send_data(buffer buf, Type target_type);
 
  public:
-  virtual std::string payload();
+  virtual std::string payload() const;
 
  private:
   optional<data_variant> var_;

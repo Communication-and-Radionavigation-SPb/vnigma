@@ -10,11 +10,11 @@ greed_send_data::greed_send_data(buffer buf)
     : core::control_message<greed_send_data>(buf),
       send_data(std::move(buf), target_type()) {}
 
-buffer greed_send_data::as_buffer() {
+buffer greed_send_data::as_buffer() const {
   return core::control_message<greed_send_data>::as_buffer(*this);
 }
 
-std::string greed_send_data::payload() {
+std::string greed_send_data::payload() const {
   return send_data::payload();
 }
 

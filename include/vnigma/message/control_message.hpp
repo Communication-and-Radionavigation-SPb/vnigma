@@ -199,7 +199,7 @@ class VNIGMA_EXPORT control_message {
    *                            to buffer
    * @return buffer command buffer representation
    */
-  buffer as_buffer(Message message) {
+  buffer as_buffer(Message message) const {
     if constexpr (!is_message_variant<Message>()) {  // #message_validation
       static_assert(is_command<Message>() || is_response<Message>(),
                     "Message can not be converted to buffer");
@@ -230,7 +230,7 @@ class VNIGMA_EXPORT control_message {
   Type target_type() const { return device_.value().type(); }
 
  private:
-  std::ostream& as_buffer(Message& message, std::ostream& ss) {
+  std::ostream& as_buffer(Message& message, std::ostream& ss) const {
     constexpr auto type = control_str<Message>::value;
     // Compose with target module protocol and device properties
     if constexpr (das_related<Message>())

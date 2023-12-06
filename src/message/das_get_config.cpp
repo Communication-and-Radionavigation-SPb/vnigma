@@ -8,7 +8,7 @@ get_config::get_config(uuid id, device dev)
 get_config::get_config(buffer buf)
     : core::control_message<get_config>(buf), base(buf) {}
 
-buffer get_config::as_buffer() {
+buffer get_config::as_buffer() const {
   return core::control_message<get_config>::as_buffer(*this);
 }
 }}  // namespace vnigma::das

@@ -67,7 +67,7 @@ std::string set_frequency::payload() const {
   return std::to_string(period);
 }
 
-buffer set_frequency::as_buffer() {
+buffer set_frequency::as_buffer() const {
   return core::control_message<set_frequency>::as_buffer(*this);
 }
 

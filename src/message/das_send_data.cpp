@@ -31,7 +31,7 @@ send_data::send_data(buffer buf, Type target_type) : var_(std::nullopt) {
   throw make_error(errc::bad_message, "vnigma::das::send_data unsupported device type data send");
 }
 
-std::string send_data::payload() {
+std::string send_data::payload() const {
   return var_.value().visit(overload{[](auto& v) {
     return (std::string)v;
   }});

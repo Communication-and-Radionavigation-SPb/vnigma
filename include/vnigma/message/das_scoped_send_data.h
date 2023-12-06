@@ -15,11 +15,11 @@ class scoped_send_data : public core::control_message<scoped_send_data>,
   virtual ~scoped_send_data() = default;
 
  public:
-  buffer as_buffer();
+  buffer as_buffer() const;
 
-  std::string payload() override;
+  std::string payload() const override;
 
-  std::string port();
+  std::string port() const;
  private:
   uint8_t port_index_;
 };

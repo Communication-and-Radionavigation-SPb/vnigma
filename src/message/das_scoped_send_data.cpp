@@ -26,15 +26,15 @@ scoped_send_data::scoped_send_data(buffer income)
   port_index_ = (uint8_t)util::toInteger(valbuf, 10);
 }
 
-buffer scoped_send_data::as_buffer() {
+buffer scoped_send_data::as_buffer() const {
   return core::control_message<scoped_send_data>::as_buffer(*this);
 }
 
-std::string scoped_send_data::payload() {
+std::string scoped_send_data::payload() const {
   return send_data::payload();
 }
 
-std::string scoped_send_data::port() {
+std::string scoped_send_data::port() const {
   return std::to_string((long)port_index_);
 }
 

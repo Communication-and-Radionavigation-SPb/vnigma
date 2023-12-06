@@ -51,7 +51,7 @@ std::string set_config::port() const {
   return std::to_string(p_.index);
 }
 
-buffer set_config::as_buffer() {
+buffer set_config::as_buffer() const {
   return core::control_message<set_config>::as_buffer(*this);
 }
 }}  // namespace vnigma::das

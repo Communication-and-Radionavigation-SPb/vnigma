@@ -12,9 +12,9 @@ class ack : public core::control_message<ack>, public base {
   ack(buffer buf);
 
  public:
-  buffer as_buffer();
+  buffer as_buffer() const;
 
-  std::string payload();
+  std::string payload() const;
 
  private:
   buffer payload_;

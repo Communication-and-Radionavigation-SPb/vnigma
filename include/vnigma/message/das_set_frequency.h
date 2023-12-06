@@ -39,7 +39,7 @@ class set_frequency : public core::control_message<set_frequency>, public base {
   std::string payload() const;
 
  public:
-  buffer as_buffer();
+  buffer as_buffer() const;
 };
 }}  // namespace vnigma::das
 

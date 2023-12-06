@@ -18,7 +18,7 @@ class set_reset : public core::control_message<set_reset>, public base {
   set_reset(buffer buf);
 
  public:
-  buffer as_buffer();
+  buffer as_buffer() const;
 };
 }}  // namespace vnigma::das
 

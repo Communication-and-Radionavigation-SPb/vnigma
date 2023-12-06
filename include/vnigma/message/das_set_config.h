@@ -40,7 +40,7 @@ class set_config : public core::control_message<set_config>, public base {
   std::string port() const;
   std::string payload() const;
 
-  buffer as_buffer();
+  buffer as_buffer() const;
 };
 }}  // namespace vnigma::das
 

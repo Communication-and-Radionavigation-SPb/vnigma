@@ -13,11 +13,11 @@ ack::ack(buffer buf) : core::control_message<ack>(buf), base(buf) {
   payload_ = std::move(buf);
 }
 
-buffer ack::as_buffer() {
+buffer ack::as_buffer() const {
   return core::control_message<ack>::as_buffer(*this);
 }
 
-std::string ack::payload() {
+std::string ack::payload() const {
   return std::string{payload_.begin(), payload_.end()};
 }
 

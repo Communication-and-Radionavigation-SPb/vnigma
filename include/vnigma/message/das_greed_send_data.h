@@ -18,9 +18,9 @@ class greed_send_data : public core::control_message<greed_send_data>,
   virtual ~greed_send_data() = default;
 
  public:
-  buffer as_buffer();
+  buffer as_buffer() const;
 
-  std::string payload() override;
+  std::string payload() const override;
 };
 }}  // namespace vnigma::das
 

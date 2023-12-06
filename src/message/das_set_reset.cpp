@@ -9,7 +9,7 @@ set_reset::set_reset(uuid id, device dev)
 set_reset::set_reset(buffer buf)
     : core::control_message<set_reset>(buf), base(buf) {}
 
-buffer set_reset::as_buffer() {
+buffer set_reset::as_buffer() const {
   return core::control_message<set_reset>::as_buffer(*this);
 }
 
