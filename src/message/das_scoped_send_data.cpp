@@ -38,4 +38,8 @@ std::string scoped_send_data::port() const {
   return std::to_string((long)port_index_);
 }
 
+uint8_t scoped_send_data::port_index() const {
+  return port_index_;
+}
+
 }}  // namespace vnigma::das

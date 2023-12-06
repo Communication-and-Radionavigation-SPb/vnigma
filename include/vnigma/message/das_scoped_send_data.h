@@ -20,6 +20,8 @@ class scoped_send_data : public core::control_message<scoped_send_data>,
   std::string payload() const override;
 
   std::string port() const;
+
+  uint8_t port_index() const; 
  private:
   uint8_t port_index_;
 };
