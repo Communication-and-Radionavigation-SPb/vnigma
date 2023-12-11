@@ -45,6 +45,12 @@ message_variant buffer_to_message_variant(buffer buf) {
       }
     }
 
+    if (control == "SN") {
+      if (protocol == "DS") {
+        return das::handshake(force_move(buf));
+      }
+    }
+
     if (control == "SF") {
       if (protocol == "DS") {
         return das::set_frequency(force_move(buf));

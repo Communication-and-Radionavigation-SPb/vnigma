@@ -25,6 +25,8 @@ enum VNIGMA_EXPORT send_period : int16_t {
   /** @brief device will never send any data untill new period is set */
   never = -1,
 };
+
+
 /**
  * @brief Module type
  * 

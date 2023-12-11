@@ -67,9 +67,10 @@ INSTANTIATE_TEST_SUITE_P(
         "<DSDSD,5,,44ED\r\n"_mb,                                     //
         "<DSSSD,3,1,$GPHDT,127.09,T*03\r\n"_mb,                      //
         // set reset
-        "<DSSSR,100005,1\r\n"_mb,           //
-        "<DSASR,100005,1\r\n"_mb,           //
-        "<DSDSR,100005,1\r\n"_mb,           //
-        "<DSSGC,1003,2\r\n"_mb,             //
-        "<DSSAK,1003,2,,WRONG_DATA\r\n"_mb  //
+        "<DSSSR,100005,1\r\n"_mb,            //
+        "<DSASR,100005,1\r\n"_mb,            //
+        "<DSDSR,100005,1\r\n"_mb,            //
+        "<DSSGC,1003,2\r\n"_mb,              //
+        "<DSSAK,1003,2,,WRONG_DATA\r\n"_mb,  //
+        "<DSXSN,15aet8gg\r\n"_mb             //
         ));
