@@ -30,6 +30,8 @@ class get_config : public core::control_message<get_config>, public base {
    * @return buffer buffer with get_config command contents
    */
   buffer as_buffer() const;
+
+  device get_device() const;
 };
 }}  // namespace vnigma::das
 

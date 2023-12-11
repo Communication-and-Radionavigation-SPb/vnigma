@@ -11,4 +11,8 @@ get_config::get_config(buffer buf)
 buffer get_config::as_buffer() const {
   return core::control_message<get_config>::as_buffer(*this);
 }
+
+device get_config::get_device() const {
+  return core::control_message<get_config>::get_device().value();
+}
 }}  // namespace vnigma::das

@@ -29,7 +29,7 @@ enum VNIGMA_EXPORT send_period : int16_t {
  * @brief Module type
  * 
  */
-enum VNIGMA_EXPORT Type { analog, serial, digital };
+enum VNIGMA_EXPORT Type { analog, serial, digital, general };
 
 /**
  * @brief Converts module <Type> to string which

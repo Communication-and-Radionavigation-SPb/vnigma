@@ -54,4 +54,8 @@ std::string set_config::port() const {
 buffer set_config::as_buffer() const {
   return core::control_message<set_config>::as_buffer(*this);
 }
+
+device set_config::get_device() const {
+  return core::control_message<set_config>::get_device().value();
+}
 }}  // namespace vnigma::das

@@ -1,5 +1,5 @@
-#include <vnigma/util/buffer_manip.h>
 #include <vnigma/message/das_greed_send_data.h>
+#include <vnigma/util/buffer_manip.h>
 
 namespace vnigma { namespace das {
 
@@ -16,6 +16,10 @@ buffer greed_send_data::as_buffer() const {
 
 std::string greed_send_data::payload() const {
   return send_data::payload();
+}
+
+device greed_send_data::get_device() const {
+  return core::control_message<greed_send_data>::get_device().value();
 }
 
 }}  // namespace vnigma::das

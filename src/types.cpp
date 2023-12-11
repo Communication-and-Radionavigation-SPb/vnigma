@@ -10,6 +10,8 @@ std::string type_to_string(const Type& t) noexcept {
     return "D";
   if (t == Type::serial)
     return "S";
+  if (t == Type::general)
+    return "X";
   return "U";
 }
 
@@ -20,6 +22,8 @@ Type type_from_char(const char ch) {
     return Type::digital;
   if (ch == 'S')
     return Type::serial;
+  if (ch == 'X')
+    return Type::general;
 
   std::stringstream ss;
   ss << "could not extract any known module type from `" << ch << "` value";

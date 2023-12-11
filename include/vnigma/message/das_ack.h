@@ -16,6 +16,8 @@ class ack : public core::control_message<ack>, public base {
 
   std::string payload() const;
 
+  device get_device() const;
+
  private:
   buffer payload_;
 };

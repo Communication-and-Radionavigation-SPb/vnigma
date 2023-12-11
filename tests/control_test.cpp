@@ -28,4 +28,7 @@ TEST(Suite, value) {
 
   std::string ack = vn::control_str<vnd::ack>::value;
   EXPECT_TRUE(ack == "AK");
+
+  std::string handshake = vn::control_str<vnd::handshake>::value;
+  EXPECT_TRUE(handshake == "SN");
 }

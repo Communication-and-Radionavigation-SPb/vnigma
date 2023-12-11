@@ -14,6 +14,7 @@ class set_config;
 class set_frequency;
 class set_reset;
 class ack;
+class handshake;
 }  // namespace das
 
 /**
@@ -77,6 +78,11 @@ struct control_str<das::get_config> {
 template <>
 struct control_str<das::ack> {
   static constexpr char value[] = "AK";
+};
+
+template <>
+struct control_str<das::handshake> {
+  static constexpr char value[] = "SN";
 };
 
 }  // namespace vnigma

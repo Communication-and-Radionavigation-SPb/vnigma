@@ -2,9 +2,9 @@
 
 namespace vnigma {
 
-device::device(uint8_t id, Type type) : id_(id), type_(type) {}
+device::device(id_t id, Type type) : id_(id), type_(type) {}
 
-uint8_t device::id() const noexcept {
+id_t device::id() const noexcept {
   return id_;
 }
 

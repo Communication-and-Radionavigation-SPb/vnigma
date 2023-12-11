@@ -65,6 +65,7 @@ set(sources
     das_scoped_send_data_test.cpp
     payload_test.cpp
     das_ack_test.cpp
+    das_handshake_test.cpp
     buffer_to_message_variant_test.cpp
 )
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})

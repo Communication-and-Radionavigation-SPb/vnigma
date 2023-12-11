@@ -15,8 +15,11 @@ using namespace core;
  * @brief Vnigma module device
  */
 class device {
+ public:
+  using id_t = uint32_t;
+
  private:
-  uint8_t id_;
+  id_t id_;
   Type type_;
 
  public:
@@ -26,14 +29,14 @@ class device {
    * @param id module identifier
    * @param type module type @link vnigma::core::Type
    */
-  device(uint8_t id, Type type);
+  device(id_t id, Type type);
 
  public:
   /**
   * @brief device id
-  * @return uint8_t id
+  * @return uint32_t id
   */
-  uint8_t id() const noexcept;
+  id_t id() const noexcept;
 
   /**
   * @brief device type

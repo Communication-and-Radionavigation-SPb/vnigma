@@ -65,6 +65,10 @@ class VNIGMA_EXPORT control_message {
     } catch (const std::invalid_argument& e) {
       error(errc::bad_message, e.what());
     }
+    if (is_service<Message>() && device_type != Type::general) {
+      error(errc::bad_message,
+            "service message must be targeted to general type which 'X'");
+    }
     /* ------------------------- validate message format ------------------------ */
     buf.remove_prefix(1);
     throw_if_empty(buf, errc::bad_message, "format token apsent");
@@ -77,7 +81,8 @@ class VNIGMA_EXPORT control_message {
     buffer::size_type lpos = 0;
     buffer::size_type rpos = 0;
     /* ---------------------- verify uuid present if needed --------------------- */
-    if constexpr (das_related<Message>() && !is_response<Message>()) {
+    if constexpr (das_related<Message>() && !is_response<Message>() &&
+                  !is_service<Message>()) {
       // validate delimeter
       if (buf.at(lpos) != ',') {
         error(errc::bad_message, "message is malformed");
@@ -96,8 +101,8 @@ class VNIGMA_EXPORT control_message {
       lpos = rpos;
     }
     /* --------------------- validate and extract device id --------------------- */
-    uint64_t devid = 0;
-    {
+    device::id_t devid = 0;
+    if (!is_service<Message>()) {
       if (lpos == buf.size()) {
         error(errc::bad_message, "device identifier apsent");
       }
@@ -115,8 +120,9 @@ class VNIGMA_EXPORT control_message {
         error(errc::bad_message, "device identifier invalid");
       }
       lpos = rpos;
-    };
+    }
     device_ = device(devid, device_type);
+
     /* ----------------- validate has port field (empty or not) ----------------- */
     if constexpr (is_port_missed<Message>() || is_port_scoped<Message>()) {
       if (lpos == buf.size()) {
@@ -152,8 +158,8 @@ class VNIGMA_EXPORT control_message {
     }
   }
 
- public:
-  device get_device() const { return device_.value(); }
+ protected:
+  std::optional<device> get_device() const { return device_; }
 
  private:
   /**
@@ -201,7 +207,8 @@ class VNIGMA_EXPORT control_message {
    */
   buffer as_buffer(Message message) const {
     if constexpr (!is_message_variant<Message>()) {  // #message_validation
-      static_assert(is_command<Message>() || is_response<Message>(),
+      static_assert(is_command<Message>() || is_response<Message>() ||
+                        is_service<Message>(),
                     "Message can not be converted to buffer");
     }
 
@@ -244,8 +251,9 @@ class VNIGMA_EXPORT control_message {
     if constexpr (das_related<Message>() && is_command<Message>()) {
       ss << "," << message.get_uuid();
     }
-
-    ss << "," << (unsigned)device_.value().id();
+    if constexpr (!is_service<Message>()) {
+      ss << "," << std::to_string(device_.value().id());
+    }
 
     // port separator if needed
     if constexpr (is_port_missed<Message>() || is_port_scoped<Message>()) {

@@ -42,4 +42,8 @@ uint8_t scoped_send_data::port_index() const {
   return port_index_;
 }
 
+device scoped_send_data::get_device() const {
+  return core::control_message<scoped_send_data>::get_device().value();
+}
+
 }}  // namespace vnigma::das

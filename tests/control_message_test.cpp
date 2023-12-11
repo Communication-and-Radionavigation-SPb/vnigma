@@ -8,6 +8,7 @@
 #include <vnigma/message/das_set_config.h>
 #include <vnigma/message/das_set_frequency.h>
 #include <vnigma/message/das_set_reset.h>
+#include <vnigma/message/das_handshake.h>
 #include <vnigma/buffer.hpp>
 #include <vnigma/message/control_message.hpp>
 
@@ -191,7 +192,6 @@ TYPED_TEST_P(DasFailsTest, format_token_not_matches) {
       },
       vn::system_error);
 }
-
 
 TYPED_TEST_P(DasFailsTest, no_uid) {
   std::string fmt = vn::control_str<TypeParam>::value;
@@ -555,9 +555,9 @@ TYPED_TEST_P(DasFailsTest, payload_empty) {
 REGISTER_TYPED_TEST_SUITE_P(DasFailsTest, empty, no_prefix, no_lf, no_cr,
                             no_protocol, protocol_missmatch, device_clarifier,
                             device_unknown, format_token_apsent,
-                            format_token_not_matches, no_uid,
-                            invalid_uid, no_device_id, device_id_empty,
-                            device_id_invalid, no_port_field, port_field_empty,
+                            format_token_not_matches, no_uid, invalid_uid,
+                            no_device_id, device_id_empty, device_id_invalid,
+                            no_port_field, port_field_empty,
                             port_scoped_field_invalid,
                             port_missed_field_invalid, payload_apsent,
                             payload_empty);
@@ -565,5 +565,6 @@ REGISTER_TYPED_TEST_SUITE_P(DasFailsTest, empty, no_prefix, no_lf, no_cr,
 using DasMsgTypes =
     ::testing::Types<vn::das::get_config, vn::das::set_frequency,
                      vn::das::set_config, vn::das::set_reset,
-                     vn::das::greed_send_data, vn::das::scoped_send_data>;
+                     vn::das::greed_send_data, vn::das::scoped_send_data,
+                     vn::das::handshake>;
 INSTANTIATE_TYPED_TEST_SUITE_P(Das, DasFailsTest, DasMsgTypes);

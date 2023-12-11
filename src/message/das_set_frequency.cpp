@@ -71,4 +71,8 @@ buffer set_frequency::as_buffer() const {
   return core::control_message<set_frequency>::as_buffer(*this);
 }
 
+device set_frequency::get_device() const {
+  return core::control_message<set_frequency>::get_device().value();
+}
+
 }}  // namespace vnigma::das

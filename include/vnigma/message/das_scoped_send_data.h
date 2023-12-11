@@ -8,7 +8,6 @@ namespace vnigma { namespace das {
 class scoped_send_data : public core::control_message<scoped_send_data>,
                          public send_data {
  public:
-
   scoped_send_data(uint8_t index, device dev, data_variant data);
   scoped_send_data(buffer buf);
 
@@ -21,7 +20,10 @@ class scoped_send_data : public core::control_message<scoped_send_data>,
 
   std::string port() const;
 
-  uint8_t port_index() const; 
+  uint8_t port_index() const;
+
+  device get_device() const;
+
  private:
   uint8_t port_index_;
 };

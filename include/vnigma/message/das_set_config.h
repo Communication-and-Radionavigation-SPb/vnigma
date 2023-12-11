@@ -41,6 +41,8 @@ class set_config : public core::control_message<set_config>, public base {
   std::string payload() const;
 
   buffer as_buffer() const;
+
+  device get_device() const;
 };
 }}  // namespace vnigma::das
 

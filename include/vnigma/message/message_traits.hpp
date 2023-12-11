@@ -17,6 +17,7 @@ class get_config;
 class scoped_send_data;
 class greed_send_data;
 class ack;
+class handshake;
 }  // namespace das
 
 template <typename Message>
@@ -27,12 +28,24 @@ constexpr bool das_related() {
          std::is_same_v<das::set_config, Message> ||
          std::is_same_v<das::greed_send_data, Message> ||
          std::is_same_v<das::scoped_send_data, Message> ||
-         std::is_same_v<das::ack, Message>;
+         std::is_same_v<das::ack, Message> ||
+         std::is_same_v<das::handshake, Message>;
 }
 
 template <typename Message>
 constexpr bool venom_related() {
   return false;
+}
+
+template <typename Message>
+constexpr bool is_service() {
+  return std::is_same_v<das::handshake, Message>;
+}
+
+template <typename Message>
+constexpr bool is_response() {
+  return std::is_same_v<das::scoped_send_data, Message> ||
+         std::is_same_v<das::greed_send_data, Message>;
 }
 
 template <typename Message>
@@ -63,7 +76,8 @@ constexpr bool has_payload() {
          std::is_same_v<das::set_config, Message> ||
          std::is_same_v<das::scoped_send_data, Message> ||
          std::is_same_v<das::greed_send_data, Message> ||
-         std::is_same_v<das::ack, Message>;
+         std::is_same_v<das::ack, Message> ||
+         std::is_same_v<das::handshake, Message>;
 }
 
 template <typename Message>
@@ -71,11 +85,6 @@ constexpr bool is_message_variant() {
   return std::is_same_v<message_variant, Message>;
 }
 
-template <typename Message>
-constexpr bool is_response() {
-  return std::is_same_v<das::scoped_send_data, Message> ||
-         std::is_same_v<das::greed_send_data, Message>;
-}
 }  // namespace vnigma
 
 #endif  // VNIGMA_MESSAGE_TRAITS_HPP

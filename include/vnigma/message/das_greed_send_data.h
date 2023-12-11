@@ -21,6 +21,8 @@ class greed_send_data : public core::control_message<greed_send_data>,
   buffer as_buffer() const;
 
   std::string payload() const override;
+
+  device get_device() const;
 };
 }}  // namespace vnigma::das
 

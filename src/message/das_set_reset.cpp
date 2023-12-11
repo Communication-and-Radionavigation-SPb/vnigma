@@ -13,4 +13,8 @@ buffer set_reset::as_buffer() const {
   return core::control_message<set_reset>::as_buffer(*this);
 }
 
+device set_reset::get_device() const {
+  return core::control_message<set_reset>::get_device().value();
+}
+
 }}  // namespace vnigma::das

@@ -17,6 +17,10 @@ buffer ack::as_buffer() const {
   return core::control_message<ack>::as_buffer(*this);
 }
 
+device ack::get_device() const {
+  return core::control_message<ack>::get_device().value();
+}
+
 std::string ack::payload() const {
   return std::string{payload_.begin(), payload_.end()};
 }

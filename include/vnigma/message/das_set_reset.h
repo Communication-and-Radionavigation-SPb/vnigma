@@ -19,6 +19,8 @@ class set_reset : public core::control_message<set_reset>, public base {
 
  public:
   buffer as_buffer() const;
+
+  device get_device() const;
 };
 }}  // namespace vnigma::das
 
