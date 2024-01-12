@@ -4,11 +4,11 @@
 
 #include <vnigma/message/das_get_config.h>
 #include <vnigma/message/das_greed_send_data.h>
+#include <vnigma/message/das_handshake.h>
 #include <vnigma/message/das_scoped_send_data.h>
 #include <vnigma/message/das_set_config.h>
 #include <vnigma/message/das_set_frequency.h>
 #include <vnigma/message/das_set_reset.h>
-#include <vnigma/message/das_handshake.h>
 #include <vnigma/buffer.hpp>
 #include <vnigma/message/control_message.hpp>
 
@@ -154,7 +154,18 @@ TYPED_TEST_P(DasFailsTest, device_unknown) {
 }
 
 TYPED_TEST_P(DasFailsTest, format_token_apsent) {
-  vn::buffer buf = "<DSS\r\n"_mb;
+  std::stringstream ss;
+  ss << "<DS";
+  if constexpr (vn::is_service<TypeParam>()) {
+    ss << "X";
+  }
+  else {
+    ss << "S";
+  }
+  ss << "\r\n";
+  std::string msg = ss.str();
+  vn::buffer buf(msg.c_str());
+
   EXPECT_THROW(
       {
         try {
@@ -174,7 +185,19 @@ TYPED_TEST_P(DasFailsTest, format_token_apsent) {
 }
 
 TYPED_TEST_P(DasFailsTest, format_token_not_matches) {
-  vn::buffer buf = "<DSS**\r\n"_mb;
+  std::stringstream ss;
+  ss << "<DS";
+
+  if constexpr (vn::is_service<TypeParam>()) {
+    ss << "X";
+  }
+  else {
+    ss << "S";
+  }
+  ss << "**\r\n";
+  std::string msg = ss.str();
+
+  vn::buffer buf(msg.c_str());
   EXPECT_THROW(
       {
         try {
@@ -195,7 +218,7 @@ TYPED_TEST_P(DasFailsTest, format_token_not_matches) {
 
 TYPED_TEST_P(DasFailsTest, no_uid) {
   std::string fmt = vn::control_str<TypeParam>::value;
-  if constexpr (vn::is_response<TypeParam>()) {
+  if constexpr (!vn::is_command<TypeParam>()) {
     GTEST_SKIP() << "Skipeed cause not command";
   }
   std::stringstream ss;
@@ -224,7 +247,7 @@ TYPED_TEST_P(DasFailsTest, no_uid) {
 TYPED_TEST_P(DasFailsTest, invalid_uid) {
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
-  if constexpr (vn::is_response<TypeParam>()) {
+  if constexpr (!vn::is_command<TypeParam>()) {
     GTEST_SKIP() << "Skipeed cause " << fmt << " is not command";
   }
   ss << "<DSS" << fmt << ",*"
@@ -250,6 +273,10 @@ TYPED_TEST_P(DasFailsTest, invalid_uid) {
 }
 
 TYPED_TEST_P(DasFailsTest, no_device_id) {
+  if (vn::is_service<TypeParam>) {
+    GTEST_SKIP();
+  }
+
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
   ss << "<DSS" << fmt;
@@ -278,6 +305,9 @@ TYPED_TEST_P(DasFailsTest, no_device_id) {
 }
 
 TYPED_TEST_P(DasFailsTest, device_id_empty) {
+  if (vn::is_service<TypeParam>()) {
+    GTEST_SKIP();
+  }
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
   ss << "<DSS" << fmt;
@@ -307,6 +337,9 @@ TYPED_TEST_P(DasFailsTest, device_id_empty) {
 }
 
 TYPED_TEST_P(DasFailsTest, device_id_invalid) {
+  if (vn::is_service<TypeParam>()) {
+    GTEST_SKIP();
+  }
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
 
@@ -486,11 +519,21 @@ TYPED_TEST_P(DasFailsTest, payload_apsent) {
   if constexpr (vn::is_port_scoped<TypeParam>()) {
     port += "1";
   }
-  ss << "<DSS" << fmt;
+  ss << "<DS";
+  if constexpr (vn::is_service<TypeParam>()) {
+    ss << "X";
+  }
+  else {
+    ss << "S";
+  }
+  ss << fmt;
   if constexpr (vn::is_command<TypeParam>()) {
     ss << ",242";
   }
-  ss << ",1" << port << "\r\n";
+  if constexpr (!vn::is_service<TypeParam>()) {
+    ss << ",1";
+  }
+  ss << port << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -518,6 +561,7 @@ TYPED_TEST_P(DasFailsTest, payload_empty) {
   std::stringstream ss;
   std::string fmt = vn::control_str<TypeParam>::value;
   std::string port = "";
+
   if constexpr (vn::is_port_missed<TypeParam>() ||
                 vn::is_port_scoped<TypeParam>()) {
     port = ",";
@@ -525,11 +569,21 @@ TYPED_TEST_P(DasFailsTest, payload_empty) {
   if constexpr (vn::is_port_scoped<TypeParam>()) {
     port += "1";
   }
-  ss << "<DSS" << fmt;
+  ss << "<DS";
+  if constexpr (vn::is_service<TypeParam>()) {
+    ss << "X";
+  }
+  else {
+    ss << "S";
+  }
+  ss << fmt;
   if constexpr (vn::is_command<TypeParam>()) {
     ss << ",242";
   }
-  ss << ",1" << port << ","
+  if constexpr (!vn::is_service<TypeParam>()) {
+    ss << ",1";
+  }
+  ss << port << ","
      << "\r\n";
   std::cout << ss.str() << std::endl;
   std::string payload = ss.str();

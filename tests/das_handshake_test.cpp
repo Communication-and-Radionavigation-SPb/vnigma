@@ -24,7 +24,7 @@ class HandshakeTests : public ::testing::TestWithParam<das_handshake_test> {};
 
 TEST_F(HandshakeTests, traits) {
   EXPECT_FALSE(vn::is_command<vn::handshake>());
-  EXPECT_TRUE(vn::is_response<vn::handshake>());
+  EXPECT_FALSE(vn::is_response<vn::handshake>());
   EXPECT_TRUE(vn::is_service<vn::handshake>());
 
   EXPECT_TRUE(vn::das_related<vn::handshake>());
