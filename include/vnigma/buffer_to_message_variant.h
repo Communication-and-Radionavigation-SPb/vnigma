@@ -10,7 +10,7 @@ namespace vnigma {
 /**
  * @brief returns protocol from buffer
  */
-std::string_view VNIGMA_EXPORT get_protocol(buffer& buf);
+std::string_view VNIGMA_EXPORT get_prototype(buffer& buf);
 
 /**
  * @brief returns control string from buffer

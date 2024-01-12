@@ -10,11 +10,38 @@ using namespace vn::literals;
 
 #define Suite BufferToMesVar
 
+struct buf_spec_m {
+  vn::buffer buf;
+  vn::buffer proto;
+  vn::buffer dev;
+  vn::buffer control;
+};
+
+class BufferSpecsExtraction : public ::testing::TestWithParam<buf_spec_m> {};
+
+TEST_P(BufferSpecsExtraction, correctly_extracts_specs) {
+  auto param = GetParam();
+
+  auto buf = param.buf;
+
+  auto protocol = vn::get_prototype(buf);
+  EXPECT_EQ(protocol, param.proto);
+
+  auto control = vn::get_control(buf);
+  EXPECT_EQ(control, param.control);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    Buffer, BufferSpecsExtraction,
+    ::testing::Values(buf_spec_m{"<VNSGD"_mb, /*proto*/ "VNS"_mb,
+                                 /*target*/ "S"_mb, /*control*/ "GD"_mb},
+                      buf_spec_m{"<DSXSN"_mb, /*proto*/ "DSX"_mb,
+                                 /*target*/ "X"_mb, /*control*/ "SN"_mb}));
+
 struct err_m {
   vn::buffer buf;
   errc code;
 };
-
 class BufferErrTest : public ::testing::TestWithParam<err_m> {};
 
 TEST_P(BufferErrTest, returns_error) {

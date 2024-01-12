@@ -6,12 +6,31 @@
 
 namespace vnigma {
 
+/**
+ * @brief Returns control message type
+ * @return std::string_view 
+ */
 std::string_view get_control(buffer& buf) {
   return buf.substr(4, 6);
 }
 
-std::string_view get_protocol(buffer& buf) {
+/**
+ * @brief Returns source device talker plus device type
+ * @throws exception if buffer do not contains enought items
+ * @return std::string_view 
+ */
+std::string_view get_prototype(buffer& buf) {
   return buf.substr(1, 3);
+}
+
+/**
+ * @brief Returns source device type represented by
+ * one symbol A | S | D
+ * @throws exception if buffer do not contains enought items
+ * @return std::string_view 
+ */
+std::string_view get_target(buffer& buf) {
+  return buf.substr(3, 1);
 }
 
 message_variant buffer_to_message_variant(buffer buf) {
@@ -26,7 +45,7 @@ message_variant buffer_to_message_variant(buffer buf) {
 
     if (control == "SD") {
       if (protocol == "DS") {
-        std::string_view target = buf.substr(3, 1);
+        std::string_view target = get_target(buf);
         if (target == "A" || target == "D") {
           return das::greed_send_data(force_move(buf));
         }
