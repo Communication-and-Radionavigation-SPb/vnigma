@@ -36,11 +36,15 @@ class set_config : public core::control_message<set_config>, public base {
   set_config(buffer buf);
 
  public:
-  void set_port(port_t p);
-  std::string port() const;
+  buffer as_buffer() const;
+
   std::string payload() const;
 
-  buffer as_buffer() const;
+  std::string port() const;
+
+  uint8_t port_index() const;
+
+  void set_port(port_t p);
 
   device get_device() const;
 };

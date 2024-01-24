@@ -51,6 +51,10 @@ std::string set_config::port() const {
   return std::to_string(p_.index);
 }
 
+uint8_t set_config::port_index() const {
+  return p_.index;
+}
+
 buffer set_config::as_buffer() const {
   return core::control_message<set_config>::as_buffer(*this);
 }
