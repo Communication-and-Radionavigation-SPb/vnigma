@@ -89,7 +89,7 @@ class message_variant {
     return std::get_if<T>(&var_);
   }
 
-  operator bool() { return var_.index() != 0; }
+  operator bool() const { return var_.index() != 0; }
 
  private:
   using variant_t =
