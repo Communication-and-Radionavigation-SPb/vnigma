@@ -37,4 +37,8 @@ std::string send_data::payload() const {
   }});
 }
 
+data_variant send_data::get_data() const {
+  return var_.value();
+}
+
 }}  // namespace vnigma::das

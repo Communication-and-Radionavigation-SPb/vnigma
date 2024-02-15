@@ -30,6 +30,8 @@ class send_data {
  public:
   virtual std::string payload() const;
 
+  data_variant get_data() const;
+
  private:
   optional<data_variant> var_;
 };

@@ -199,6 +199,7 @@ class data {
 };
 }  // namespace serial
 
+/* ------------------------------ Data variant ------------------------------ */
 class data_variant {
  public:
   template <typename Data,

@@ -1,6 +1,7 @@
 #if !defined(VNIGMA_MESSAGE_GREED_SEND_DATA)
 #define VNIGMA_MESSAGE_GREED_SEND_DATA
 
+#include <vector>
 #include <vnigma/message/das_send_data.h>
 
 namespace vnigma { namespace das {
