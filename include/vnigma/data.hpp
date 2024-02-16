@@ -28,7 +28,8 @@ class quntified_data {
   static_assert(Quantity != 0);
 
  public:
-  using container_t = std::vector<value_type>;
+  using item_type = value_type;
+  using container_t = std::vector<item_type>;
 
   using iterator = typename container_t::iterator;
   using const_iterator = typename container_t::iterator;
@@ -167,7 +168,6 @@ namespace analog {
  * 
  * @tparam Quantity Amount of valuable fields which represents port values
  */
-
 using data = base::quntified_data<int, 8>;
 }  // namespace analog
 
