@@ -22,6 +22,16 @@ TEST_F(AnalogDataTests, at_port) {
   }
 }
 
+TEST_F(AnalogDataTests, as_vector) {
+  using T = vnigma::analog::data::item_type;
+  std::vector<T> items{1,2,3,4,5,6,7,8};
+  vnigma::analog::data data(items);
+
+  std::vector<T> actual = data.items();
+
+  EXPECT_EQ(actual, items);
+}
+
 class DigitalDataTests : public ::testing::Test {};
 
 TEST_F(DigitalDataTests, item_type) {
@@ -45,4 +55,15 @@ TEST_F(DigitalDataTests, at_port) {
     bool expected = i % 2 > 0 ? false : true;
     EXPECT_EQ(data.at(i), expected);
   }
+}
+
+TEST_F(DigitalDataTests, as_vector) {
+  using T = vnigma::digital::data::item_type;
+  std::vector<T> items(16, true);
+
+  vnigma::digital::data data(items);
+
+  std::vector<T> actual = data.items();
+
+  EXPECT_EQ(actual, items);
 }
