@@ -34,6 +34,7 @@ TEST_F(HandshakeTests, traits) {
   EXPECT_FALSE(vn::is_port_scoped<vn::handshake>());
 
   EXPECT_TRUE(vn::has_payload<vn::handshake>());
+  EXPECT_FALSE(vn::is_data<vn::handshake>());
 }
 
 TEST_P(HandshakeTests, from_buffer) {

@@ -34,6 +34,8 @@ TEST_F(ScopedSendDataTest, traits) {
   EXPECT_TRUE(vn::is_port_scoped<vn::scoped_send_data>());
 
   EXPECT_TRUE(vn::has_payload<vn::scoped_send_data>());
+
+  EXPECT_TRUE(vn::is_data<vn::scoped_send_data>());
 }
 
 TEST_P(ScopedSendDataTest, as_buffer) {

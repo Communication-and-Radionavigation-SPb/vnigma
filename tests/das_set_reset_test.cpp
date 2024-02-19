@@ -23,6 +23,7 @@ TEST_F(SetResetTest, traits) {
   EXPECT_FALSE(vn::has_payload<vn::set_reset>());
   EXPECT_FALSE(vn::is_port_missed<vn::set_reset>());
   EXPECT_FALSE(vn::is_port_scoped<vn::set_reset>());
+  EXPECT_FALSE(vn::is_data<vn::set_reset>());
 }
 
 TEST_P(SetResetTest, as_buffer) {

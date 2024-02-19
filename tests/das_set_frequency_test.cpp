@@ -41,6 +41,8 @@ TEST_F(Suite, traits) {
 
   EXPECT_TRUE(vn::is_port_missed<vn::set_frequency>());
   EXPECT_FALSE(vn::is_port_scoped<vn::set_frequency>());
+
+  EXPECT_FALSE(vn::is_data<vn::set_frequency>());
 }
 
 TEST_P(Suite, as_buffer) {

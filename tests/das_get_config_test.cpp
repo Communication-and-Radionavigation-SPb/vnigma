@@ -39,6 +39,9 @@ TEST_F(Suite, traits) {
 
   EXPECT_FALSE(vn::is_port_missed<vn::get_config>());
   EXPECT_FALSE(vn::is_port_scoped<vn::get_config>());
+
+
+  EXPECT_FALSE(vn::is_data<vn::get_config>());
 }
 
 TEST_P(Suite, as_buffer) {

@@ -63,6 +63,8 @@ TEST_F(SetConfigTest, traits) {
 
   EXPECT_FALSE(vn::is_port_missed<vn::set_config>());
   EXPECT_TRUE(vn::is_port_scoped<vn::set_config>());
+
+  EXPECT_FALSE(vn::is_data<vn::set_config>());
 }
 
 TEST_P(SetConfigTest, as_buffer) {
