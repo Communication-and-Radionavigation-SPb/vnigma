@@ -35,6 +35,7 @@ TEST_F(AckScopedTests, traits) {
   EXPECT_FALSE(vn::is_port_scoped<vn::ack>());
 
   EXPECT_TRUE(vn::has_payload<vn::ack>());
+  EXPECT_FALSE(vn::is_data<vn::ack>());
 }
 
 TEST_P(AckScopedTests, as_buffer) {

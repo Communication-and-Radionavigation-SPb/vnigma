@@ -29,6 +29,8 @@ TEST_F(GreedSendDataTest, traits) {
   EXPECT_FALSE(vn::is_port_scoped<vn::greed_send_data>());
 
   EXPECT_TRUE(vn::has_payload<vn::greed_send_data>());
+
+  EXPECT_TRUE(vn::is_data<vn::greed_send_data>());
 }
 
 TEST_P(GreedSendDataTest, as_buffer) {

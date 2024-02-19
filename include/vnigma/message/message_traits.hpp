@@ -9,7 +9,7 @@ namespace vnigma {
 
 class message_variant;
 namespace das {
-
+class send_data;
 class set_reset;
 class set_frequency;
 class set_config;
@@ -30,6 +30,12 @@ constexpr bool das_related() {
          std::is_same_v<das::scoped_send_data, Message> ||
          std::is_same_v<das::ack, Message> ||
          std::is_same_v<das::handshake, Message>;
+}
+
+template <typename Message>
+constexpr bool is_data() {
+  return std::is_convertible_v<Message, das::send_data> ||
+         std::is_same_v<das::send_data, Message>;
 }
 
 template <typename Message>
