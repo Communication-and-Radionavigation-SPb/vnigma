@@ -133,6 +133,10 @@ class quntified_data {
 
   reference at(size_type pos) { return data_.at(pos); }
 
+  std::vector<item_type> items() const {
+    return data_;
+  }
+
   const_reference at(size_type pos) const { return data_.at(pos); }
 
   operator std::string() const {
