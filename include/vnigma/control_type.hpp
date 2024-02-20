@@ -8,8 +8,9 @@ namespace vnigma {
 
 namespace das {
 class get_config;
-class greed_send_data;
-class scoped_send_data;
+class analog_send_data;
+class serial_send_data;
+class digital_send_data;
 class set_config;
 class set_frequency;
 class set_reset;
@@ -26,20 +27,29 @@ template <typename Message>
 struct control_str {};
 
 /**
- * @brief Send Data to string conversion
+ * @brief Analog send data message format string
  * @link vnigma::core::control_type
  */
 template <>
-struct control_str<das::greed_send_data> {
+struct control_str<das::analog_send_data> {
   static constexpr char value[] = "SD";
 };
 
 /**
- * @brief Send Data to string conversion
+ * @brief Serial send data message format string
  * @link vnigma::core::control_type
  */
 template <>
-struct control_str<das::scoped_send_data> {
+struct control_str<das::serial_send_data> {
+  static constexpr char value[] = "SD";
+};
+
+/**
+ * @brief Digital send data message format string
+ * @link vnigma::core::control_type
+ */
+template <>
+struct control_str<das::digital_send_data> {
   static constexpr char value[] = "SD";
 };
 

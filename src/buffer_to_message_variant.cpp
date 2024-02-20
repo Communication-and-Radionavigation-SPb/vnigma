@@ -46,11 +46,14 @@ message_variant buffer_to_message_variant(buffer buf) {
     if (control == "SD") {
       if (protocol == "DS") {
         std::string_view target = get_target(buf);
-        if (target == "A" || target == "D") {
-          return das::greed_send_data(force_move(buf));
+        if (target == "A") {
+          return das::analog_send_data(force_move(buf));
+        }
+        if (target == "D") {
+          return das::digital_send_data(force_move(buf));
         }
         if (target == "S") {
-          return das::scoped_send_data(force_move(buf));
+          return das::serial_send_data(force_move(buf));
         }
         std::stringstream ss;
         ss << target << " device type is not supported";

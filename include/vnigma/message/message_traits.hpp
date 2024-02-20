@@ -14,8 +14,9 @@ class set_reset;
 class set_frequency;
 class set_config;
 class get_config;
-class scoped_send_data;
-class greed_send_data;
+class serial_send_data;
+class analog_send_data;
+class digital_send_data;
 class ack;
 class handshake;
 }  // namespace das
@@ -26,8 +27,9 @@ constexpr bool das_related() {
          std::is_same_v<das::set_frequency, Message> ||
          std::is_same_v<das::get_config, Message> ||
          std::is_same_v<das::set_config, Message> ||
-         std::is_same_v<das::greed_send_data, Message> ||
-         std::is_same_v<das::scoped_send_data, Message> ||
+         std::is_same_v<das::analog_send_data, Message> ||
+         std::is_same_v<das::serial_send_data, Message> ||
+         std::is_same_v<das::digital_send_data, Message> ||
          std::is_same_v<das::ack, Message> ||
          std::is_same_v<das::handshake, Message>;
 }
@@ -50,8 +52,9 @@ constexpr bool is_service() {
 
 template <typename Message>
 constexpr bool is_response() {
-  return std::is_same_v<das::scoped_send_data, Message> ||
-         std::is_same_v<das::greed_send_data, Message>;
+  return std::is_same_v<das::serial_send_data, Message> ||
+         std::is_same_v<das::analog_send_data, Message> ||
+         std::is_same_v<das::digital_send_data, Message>;
 }
 
 template <typename Message>
@@ -66,24 +69,26 @@ constexpr bool is_command() {
 template <typename Message>
 constexpr bool is_port_scoped() {
   return std::is_same_v<das::set_config, Message> ||
-         std::is_same_v<das::scoped_send_data, Message>;
+         std::is_same_v<das::serial_send_data, Message>;
 }
 
 template <typename Message>
 constexpr bool is_port_missed() {
   return std::is_same_v<das::set_frequency, Message> ||
-         std::is_same_v<das::greed_send_data, Message> ||
-         std::is_same_v<das::ack, Message>;
+         std::is_same_v<das::analog_send_data, Message> ||
+         std::is_same_v<das::ack, Message> ||
+         std::is_same_v<das::digital_send_data, Message>;
 }
 
 template <typename Message>
 constexpr bool has_payload() {
   return std::is_same_v<das::set_frequency, Message> ||
          std::is_same_v<das::set_config, Message> ||
-         std::is_same_v<das::scoped_send_data, Message> ||
-         std::is_same_v<das::greed_send_data, Message> ||
+         std::is_same_v<das::serial_send_data, Message> ||
+         std::is_same_v<das::analog_send_data, Message> ||
          std::is_same_v<das::ack, Message> ||
-         std::is_same_v<das::handshake, Message>;
+         std::is_same_v<das::handshake, Message> ||
+         std::is_same_v<das::digital_send_data, Message>;
 }
 
 template <typename Message>
