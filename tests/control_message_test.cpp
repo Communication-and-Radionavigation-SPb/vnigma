@@ -2,10 +2,10 @@
 
 #include <string>
 
+#include <vnigma/message/das_analog_send_data.h>
 #include <vnigma/message/das_get_config.h>
-#include <vnigma/message/das_greed_send_data.h>
 #include <vnigma/message/das_handshake.h>
-#include <vnigma/message/das_scoped_send_data.h>
+#include <vnigma/message/das_serial_send_data.h>
 #include <vnigma/message/das_set_config.h>
 #include <vnigma/message/das_set_frequency.h>
 #include <vnigma/message/das_set_reset.h>
@@ -619,6 +619,6 @@ REGISTER_TYPED_TEST_SUITE_P(DasFailsTest, empty, no_prefix, no_lf, no_cr,
 using DasMsgTypes =
     ::testing::Types<vn::das::get_config, vn::das::set_frequency,
                      vn::das::set_config, vn::das::set_reset,
-                     vn::das::greed_send_data, vn::das::scoped_send_data,
+                     vn::das::analog_send_data, vn::das::serial_send_data,
                      vn::das::handshake>;
 INSTANTIATE_TYPED_TEST_SUITE_P(Das, DasFailsTest, DasMsgTypes);

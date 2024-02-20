@@ -7,10 +7,11 @@
 #include <optional>
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/message/das_ack.h>
+#include <vnigma/message/das_analog_send_data.h>
+#include <vnigma/message/das_digital_send_data.h>
 #include <vnigma/message/das_get_config.h>
-#include <vnigma/message/das_greed_send_data.h>
 #include <vnigma/message/das_handshake.h>
-#include <vnigma/message/das_scoped_send_data.h>
+#include <vnigma/message/das_serial_send_data.h>
 #include <vnigma/message/das_set_config.h>
 #include <vnigma/message/das_set_frequency.h>
 #include <vnigma/message/das_set_reset.h>
@@ -94,8 +95,8 @@ class message_variant {
  private:
   using variant_t =
       variant<system_error, das::set_frequency, das::set_reset, das::set_config,
-              das::get_config, das::greed_send_data, das::scoped_send_data,
-              das::ack, das::handshake>;
+              das::get_config, das::analog_send_data, das::serial_send_data,
+              das::digital_send_data, das::ack, das::handshake>;
 
   variant_t var_;
 };

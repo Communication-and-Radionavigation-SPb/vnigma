@@ -5,13 +5,13 @@
 
 namespace vnigma { namespace das {
 
-class scoped_send_data : public core::control_message<scoped_send_data>,
+class serial_send_data : public core::control_message<serial_send_data>,
                          public send_data {
  public:
-  scoped_send_data(uint8_t index, device dev, data_variant data);
-  scoped_send_data(buffer buf);
+  serial_send_data(uint8_t index, device dev, data_variant data);
+  serial_send_data(buffer buf);
 
-  virtual ~scoped_send_data() = default;
+  virtual ~serial_send_data() = default;
 
  public:
   buffer as_buffer() const;
@@ -23,6 +23,8 @@ class scoped_send_data : public core::control_message<scoped_send_data>,
   uint8_t port_index() const;
 
   device get_device() const;
+
+  serial::data get_data() const;
 
  private:
   uint8_t port_index_;

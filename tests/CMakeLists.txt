@@ -44,31 +44,15 @@ endif()
 # tests sources
 #----------------------------------------------------------------------------------------------------------------------
 
-set(sources
-    mock_devices.hpp
-    baud_test.cpp
-    control_test.cpp
-    buffer_test.cpp
-    binary_test.cpp
-    buffer_manip_test.cpp
-    message_variant_test.cpp
-    serial_port_test.cpp
-    number_util_test.cpp
-    control_message_test.cpp
-    das_message_test.cpp
-    das_set_frequency_test.cpp
-    das_set_reset_test.cpp
-    das_set_config_test.cpp
-    das_get_config_test.cpp
-    das_sd_p.h
-    das_greed_send_data_test.cpp
-    das_scoped_send_data_test.cpp
-    payload_test.cpp
-    das_ack_test.cpp
-    das_handshake_test.cpp
-    buffer_to_message_variant_test.cpp
-    data_test.cpp
+file(GLOB sources *.h *.hpp *.cpp)
+
+set(SOLUTION_SOURCES
+  ${SOLUTION_SOURCES}
+  ${HEADERS}
+  PARENT_SCOPE
 )
+
+
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 
 #----------------------------------------------------------------------------------------------------------------------
@@ -81,7 +65,8 @@ target_sources(vnigma-tests PRIVATE ${sources})
 target_link_libraries(vnigma-tests
     PRIVATE
         vnigma::vnigma
-        gtest_main)
+        gtest_main
+        gmock_main)
 
 if(NOT is_top_level)
     win_copy_deps_to_target_dir(vnigma-tests vnigma::vnigma)
