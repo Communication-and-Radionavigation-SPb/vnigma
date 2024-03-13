@@ -1,6 +1,7 @@
 #if !defined(VNIGMA_BUFFER_H)
 #define VNIGMA_BUFFER_H
 
+#include <vnigma/export.h>
 #include <any>
 #include <iterator>
 #include <string_view>
@@ -12,7 +13,7 @@ namespace vnigma {
 
 using std::any;
 
-class buffer {
+class VNIGMA_EXPORT buffer {
  public:
   using iterator = std::string_view::iterator;
   using const_iterator = std::string_view::const_iterator;
