@@ -1,12 +1,13 @@
 #if !defined(VNIGMA_MESSAGE_DAS_MESSAGE_HPP)
 #define VNIGMA_MESSAGE_DAS_MESSAGE_HPP
 
+#include <vnigma/export.h>
 #include <vnigma/id_t.h>
 #include <vnigma/buffer.hpp>
 #include <vnigma/exception.hpp>
 
 namespace vnigma { namespace das {
-class base {
+class VNIGMA_EXPORT base {
  private:
   uuid id_;
 

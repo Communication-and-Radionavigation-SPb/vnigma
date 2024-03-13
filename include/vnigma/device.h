@@ -14,7 +14,7 @@ using namespace core;
 /**
  * @brief Vnigma module device
  */
-class device {
+class VNIGMA_EXPORT device {
  public:
   using id_t = uint32_t;
 

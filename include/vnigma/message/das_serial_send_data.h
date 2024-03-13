@@ -1,12 +1,14 @@
 #if !defined(VNIGMA_MESSAGE_SCOPED_SEND_DATA)
 #define VNIGMA_MESSAGE_SCOPED_SEND_DATA
 
+#include <vnigma/export.h>
 #include <vnigma/message/das_send_data.h>
 
 namespace vnigma { namespace das {
 
-class serial_send_data : public core::control_message<serial_send_data>,
-                         public send_data {
+class VNIGMA_EXPORT serial_send_data
+    : public core::control_message<serial_send_data>,
+      public send_data {
  public:
   serial_send_data(uint8_t index, device dev, data_variant data);
   serial_send_data(buffer buf);

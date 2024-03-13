@@ -6,6 +6,7 @@
 /* ----------------------------------- STD ---------------------------------- */
 #include <optional>
 /* -------------------------------- Internal -------------------------------- */
+#include <vnigma/export.h>
 #include <vnigma/message/das_ack.h>
 #include <vnigma/message/das_analog_send_data.h>
 #include <vnigma/message/das_digital_send_data.h>
@@ -31,7 +32,7 @@ using std::optional;
  *  - type getter 
  * 
  */
-class message_variant {
+class VNIGMA_EXPORT message_variant {
  public:
   template <
       typename Message,

@@ -1,8 +1,9 @@
 #if !defined(VNIGMA_MESSAGE_ANALOG_SEND_DATA)
 #define VNIGMA_MESSAGE_ANALOG_SEND_DATA
 
-#include <vector>
+#include <vnigma/export.h>
 #include <vnigma/message/das_send_data.h>
+#include <vector>
 
 namespace vnigma { namespace das {
 
@@ -10,8 +11,9 @@ namespace vnigma { namespace das {
  * @brief port missed send data response
  * used for analog and digital data
  */
-class analog_send_data : public core::control_message<analog_send_data>,
-                        public send_data {
+class VNIGMA_EXPORT analog_send_data
+    : public core::control_message<analog_send_data>,
+      public send_data {
  public:
   analog_send_data(device dev, data_variant data);
   analog_send_data(buffer buf);
