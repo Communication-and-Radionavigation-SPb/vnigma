@@ -55,6 +55,7 @@ TEST_F(SerialSendDataTests, correctly_resolves_buffer) {
   EXPECT_EQ(cmd.get_data().value(), "data");
 }
 
+
 TEST_P(SerialSendDataTests, as_buffer) {
   auto param = GetParam();
 

@@ -1,4 +1,3 @@
-#include "vnigma/export_static.h"
 #if !defined(VNIGMA_MESSAGE_ACK_SCOPED_H)
 #define VNIGMA_MESSAGE_ACK_SCOPED_H
 
