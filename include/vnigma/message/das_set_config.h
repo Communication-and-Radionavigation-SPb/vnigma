@@ -1,8 +1,8 @@
 #if !defined(VNIGMA_MESSAGE_SET_CONFIG_H)
 #define VNIGMA_MESSAGE_SET_CONFIG_H
 
-/* ----------------------------------- STD ---------------------------------- */
 /* -------------------------------- Internal -------------------------------- */
+#include <vnigma/export.h>
 #include <vnigma/message/das_message.h>
 #include <vnigma/ports/serial_port.h>
 #include <vnigma/buffer.hpp>
@@ -21,7 +21,8 @@
 // 3. Port number
 // 4. Configuration
 namespace vnigma { namespace das {
-class set_config : public core::control_message<set_config>, public base {
+class VNIGMA_EXPORT set_config : public core::control_message<set_config>,
+                                 public base {
  public:
   using port_t = serial::port;
 

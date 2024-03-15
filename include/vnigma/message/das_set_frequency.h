@@ -2,9 +2,9 @@
 #define VNIGMA_MESSAGE_SET_FREQUENCY_H
 
 /* ----------------------------------- STD ---------------------------------- */
-#include <sstream>
 #include <string>
 /* -------------------------------- Internal -------------------------------- */
+#include <vnigma/export.h>
 #include <vnigma/message/das_message.h>
 #include <vnigma/types.h>
 #include <vnigma/message/control_message.hpp>
@@ -16,7 +16,8 @@ namespace vnigma { namespace das {
  * @brief configures frequncy with which module
  * will send data
  */
-class set_frequency : public core::control_message<set_frequency>, public base {
+class VNIGMA_EXPORT set_frequency : public core::control_message<set_frequency>,
+                                    public base {
  public:
   using sendp = core::send_period;
 

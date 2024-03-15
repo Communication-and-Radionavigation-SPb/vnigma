@@ -3,12 +3,14 @@
 
 /* ----------------------------------- STD ---------------------------------- */
 /* -------------------------------- Internal -------------------------------- */
+#include <vnigma/export.h>
 #include <vnigma/message/das_message.h>
 #include <vnigma/message/control_message.hpp>
 
 namespace vnigma { namespace das {
 
-class get_config : public core::control_message<get_config>, public base {
+class VNIGMA_EXPORT get_config : public core::control_message<get_config>,
+                                 public base {
  public:
   /**
    * @brief get config command

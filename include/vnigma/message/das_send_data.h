@@ -3,8 +3,8 @@
 
 /* ----------------------------------- STD ---------------------------------- */
 #include <optional>
-#include <vector>
 /* -------------------------------- Internal -------------------------------- */
+#include <vnigma/export.h>
 #include <vnigma/message/das_message.h>
 #include <vnigma/buffer.hpp>
 #include <vnigma/data.hpp>
@@ -22,7 +22,7 @@ using std::optional;
  * @brief base class for all send data messages
  * should not be used in real code
  */
-class send_data {
+class VNIGMA_EXPORT send_data {
  protected:
   send_data(data_variant data);
   send_data(buffer buf, Type target_type);

@@ -32,4 +32,4 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 add_executable(vnigma-execution)
 target_sources(vnigma-execution PRIVATE ${sources})
 
-target_link_libraries(vnigma-execution PRIVATE vnigma::vnigma)
+target_link_libraries(vnigma-execution PUBLIC vnigma::vnigma)

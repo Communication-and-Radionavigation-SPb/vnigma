@@ -1,12 +1,13 @@
 #if !defined(VNIGMA_MESSAGE_DIGITAL_SEND_DATA_H)
 #define VNIGMA_MESSAGE_DIGITAL_SEND_DATA_H
 
+#include <vnigma/export.h>
 #include <vnigma/message/das_send_data.h>
-#include <vector>
 
 namespace vnigma { namespace das {
-class digital_send_data : public core::control_message<digital_send_data>,
-                          public send_data {
+class VNIGMA_EXPORT digital_send_data
+    : public core::control_message<digital_send_data>,
+      public send_data {
  public:
   digital_send_data(device dev, digital::data data);
   digital_send_data(buffer buf);
