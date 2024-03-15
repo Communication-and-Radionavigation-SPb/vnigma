@@ -1,6 +1,4 @@
-#if !defined(VNIGMA_MESSAGE_ANALOG_SEND_DATA_H)
-#define VNIGMA_MESSAGE_ANALOG_SEND_DATA_H
-
+#pragma once
 /* ----------------------------------- STD ---------------------------------- */
 #include <optional>
 /* -------------------------------- Internal -------------------------------- */
@@ -9,6 +7,9 @@
 #include <vnigma/buffer.hpp>
 #include <vnigma/data.hpp>
 #include <vnigma/message/control_message.hpp>
+
+#if !defined(VNIGMA_MESSAGE_ANALOG_SEND_DATA_H)
+#define VNIGMA_MESSAGE_ANALOG_SEND_DATA_H
 
 /* -------------------------------------------------------------------------- */
 /*                             Send data response                             */

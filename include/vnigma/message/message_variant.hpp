@@ -1,8 +1,4 @@
-
-
-#if !defined(VNIGMA_MESSAGE_VARIANT_H)
-#define VNIGMA_MESSAGE_VARIANT_H
-
+#pragma once
 /* ----------------------------------- STD ---------------------------------- */
 #include <optional>
 /* -------------------------------- Internal -------------------------------- */
@@ -19,6 +15,9 @@
 #include <vnigma/util/variant.h>
 #include <vnigma/control_type.hpp>
 #include <vnigma/exception.hpp>
+
+#if !defined(VNIGMA_MESSAGE_VARIANT_H)
+#define VNIGMA_MESSAGE_VARIANT_H
 
 namespace vnigma {
 
