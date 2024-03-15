@@ -1,8 +1,10 @@
-#if !defined(VNIGMA_MESSAGE_SCOPED_SEND_DATA)
-#define VNIGMA_MESSAGE_SCOPED_SEND_DATA
+#pragma once
 
 #include <vnigma/export.h>
 #include <vnigma/message/das_send_data.h>
+
+#if !defined(VNIGMA_MESSAGE_SCOPED_SEND_DATA)
+#define VNIGMA_MESSAGE_SCOPED_SEND_DATA
 
 namespace vnigma { namespace das {
 

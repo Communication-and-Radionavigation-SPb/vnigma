@@ -1,9 +1,12 @@
-#if !defined(VNIGMA_MESSAGE_TRAITS_HPP)
-#define VNIGMA_MESSAGE_TRAITS_HPP
+
+#pragma once
 
 #include <vnigma/util/flag.h>
 #include <type_traits>
 #include <vnigma/exception.hpp>
+
+#if !defined(VNIGMA_MESSAGE_TRAITS_HPP)
+#define VNIGMA_MESSAGE_TRAITS_HPP
 
 namespace vnigma {
 

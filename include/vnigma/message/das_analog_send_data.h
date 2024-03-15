@@ -1,9 +1,10 @@
+#pragma once
+
 #if !defined(VNIGMA_MESSAGE_ANALOG_SEND_DATA)
 #define VNIGMA_MESSAGE_ANALOG_SEND_DATA
 
 #include <vnigma/export.h>
 #include <vnigma/message/das_send_data.h>
-#include <vector>
 
 namespace vnigma { namespace das {
 

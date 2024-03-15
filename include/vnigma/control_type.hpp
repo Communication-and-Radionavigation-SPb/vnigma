@@ -2,7 +2,6 @@
 #define VNIGMA_CONTROL_TYPE_HPP
 
 #include <vnigma/export.h>
-#include <sstream>
 
 namespace vnigma {
 

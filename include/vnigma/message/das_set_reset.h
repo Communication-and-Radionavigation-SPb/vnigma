@@ -1,5 +1,4 @@
-#if !defined(VNIGMA_MESSAGES_SET_RESET_H)
-#define VNIGMA_MESSAGES_SET_RESET_H
+#pragma once
 
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/export.h>
@@ -7,6 +6,9 @@
 #include <vnigma/buffer.hpp>
 #include <vnigma/control_type.hpp>
 #include <vnigma/message/control_message.hpp>
+
+#if !defined(VNIGMA_MESSAGES_SET_RESET_H)
+#define VNIGMA_MESSAGES_SET_RESET_H
 
 namespace vnigma { namespace das {
 

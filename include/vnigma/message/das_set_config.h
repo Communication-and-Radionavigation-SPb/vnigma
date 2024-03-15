@@ -1,5 +1,4 @@
-#if !defined(VNIGMA_MESSAGE_SET_CONFIG_H)
-#define VNIGMA_MESSAGE_SET_CONFIG_H
+#pragma once
 
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/export.h>
@@ -8,6 +7,10 @@
 #include <vnigma/buffer.hpp>
 #include <vnigma/message/control_message.hpp>
 #include <vnigma/util/move.hpp>
+
+#if !defined(VNIGMA_MESSAGE_SET_CONFIG_H)
+#define VNIGMA_MESSAGE_SET_CONFIG_H
+
 /* -------------------------------------------------------------------------- */
 /*                             Set config command                             */
 /* -------------------------------------------------------------------------- */

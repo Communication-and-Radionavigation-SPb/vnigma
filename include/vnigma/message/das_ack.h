@@ -1,3 +1,5 @@
+#pragma once
+
 #if !defined(VNIGMA_MESSAGE_ACK_SCOPED_H)
 #define VNIGMA_MESSAGE_ACK_SCOPED_H
 

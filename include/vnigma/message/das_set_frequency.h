@@ -1,5 +1,4 @@
-#if !defined(VNIGMA_MESSAGE_SET_FREQUENCY_H)
-#define VNIGMA_MESSAGE_SET_FREQUENCY_H
+#pragma once
 
 /* ----------------------------------- STD ---------------------------------- */
 #include <string>
@@ -8,6 +7,10 @@
 #include <vnigma/message/das_message.h>
 #include <vnigma/types.h>
 #include <vnigma/message/control_message.hpp>
+
+#if !defined(VNIGMA_MESSAGE_SET_FREQUENCY_H)
+#define VNIGMA_MESSAGE_SET_FREQUENCY_H
+
 /* -------------------------------------------------------------------------- */
 /*                            Set frequency command                           */
 /* -------------------------------------------------------------------------- */

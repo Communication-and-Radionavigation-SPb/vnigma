@@ -1,15 +1,14 @@
 #pragma once
 
-#if !defined(VNIGMA_MESSAGE_DAS_HANDSHAKE)
-#define VNIGMA_MESSAGE_DAS_HANDSHAKE
-
-#include <string>
-
 #include <vnigma/export.h>
 #include <vnigma/message/das_message.h>
+#include <string>
 #include <vnigma/buffer.hpp>
 #include <vnigma/message/control_message.hpp>
 #include <vnigma/util/move.hpp>
+
+#if !defined(VNIGMA_MESSAGE_DAS_HANDSHAKE)
+#define VNIGMA_MESSAGE_DAS_HANDSHAKE
 
 namespace vnigma { namespace das {
 class VNIGMA_EXPORT handshake : public core::control_message<handshake> {

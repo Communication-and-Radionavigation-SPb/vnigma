@@ -1,11 +1,12 @@
-#if !defined(VNIGMA_MESSAGE_GET_CONFIG_H)
-#define VNIGMA_MESSAGE_GET_CONFIG_H
+#pragma once
 
-/* ----------------------------------- STD ---------------------------------- */
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/export.h>
 #include <vnigma/message/das_message.h>
 #include <vnigma/message/control_message.hpp>
+
+#if !defined(VNIGMA_MESSAGE_GET_CONFIG_H)
+#define VNIGMA_MESSAGE_GET_CONFIG_H
 
 namespace vnigma { namespace das {
 
