@@ -5,7 +5,6 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
-#include "vnigma/export_static.h"
 
 namespace vnigma { namespace core {
 
