@@ -5,6 +5,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include "vnigma/export_static.h"
 
 namespace vnigma { namespace core {
 
@@ -26,7 +27,6 @@ enum VNIGMA_EXPORT send_period : int16_t {
   never = -1,
 };
 
-
 /**
  * @brief Module type
  * 
@@ -40,7 +40,7 @@ enum VNIGMA_EXPORT Type { analog, serial, digital, general };
  * @param t Type of module
  * @return std::string String representation of module type
  */
-std::string type_to_string(const Type& t) noexcept;
+std::string VNIGMA_EXPORT type_to_string(const Type& t) noexcept;
 
 /**
  * @brief Converts string representation of module
