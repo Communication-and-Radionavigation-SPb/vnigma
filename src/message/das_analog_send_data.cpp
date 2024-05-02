@@ -26,11 +26,11 @@ std::string analog_send_data::payload() const {
   return send_data::payload();
 }
 
-device analog_send_data::get_device() const {
+const device& analog_send_data::get_device() const {
   return core::control_message<analog_send_data>::get_device().value();
 }
 
-analog::data analog_send_data::get_data() const {
+const analog::data& analog_send_data::get_data() const {
   return send_data::get_data().get<analog::data>();
 }
 

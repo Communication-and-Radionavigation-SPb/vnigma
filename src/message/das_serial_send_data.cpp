@@ -45,7 +45,7 @@ std::string serial_send_data::port() const {
   return std::to_string((long)port_index_);
 }
 
-serial::data serial_send_data::get_data() const {
+const serial::data& serial_send_data::get_data() const {
   return send_data::get_data().get<serial::data>();
 }
 
@@ -53,7 +53,7 @@ uint8_t serial_send_data::port_index() const {
   return port_index_;
 }
 
-device serial_send_data::get_device() const {
+const device& serial_send_data::get_device() const {
   return core::control_message<serial_send_data>::get_device().value();
 }
 
