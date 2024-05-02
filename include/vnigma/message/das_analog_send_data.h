@@ -26,9 +26,9 @@ class VNIGMA_EXPORT analog_send_data
 
   std::string payload() const override;
 
-  device get_device() const;
+  const device& get_device() const;
 
-  analog::data get_data() const;
+  const analog::data& get_data() const;
 };
 }}  // namespace vnigma::das
 

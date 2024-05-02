@@ -25,11 +25,11 @@ std::string digital_send_data::payload() const {
   return send_data::payload();
 }
 
-device digital_send_data::get_device() const {
+const device& digital_send_data::get_device() const {
   return core::control_message<digital_send_data>::get_device().value();
 }
 
-digital::data digital_send_data::get_data() const {
+const digital::data& digital_send_data::get_data() const {
   return send_data::get_data().get<digital::data>();
 }
 
