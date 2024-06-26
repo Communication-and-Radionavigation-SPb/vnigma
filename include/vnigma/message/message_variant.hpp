@@ -90,6 +90,8 @@ class VNIGMA_EXPORT message_variant {
     return std::get_if<T>(&var_);
   }
 
+  std::size_t index() const { return var_.index(); }
+
   operator bool() const { return var_.index() != 0; }
 
  private:
