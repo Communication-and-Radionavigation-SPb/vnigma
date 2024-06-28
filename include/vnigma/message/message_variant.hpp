@@ -90,6 +90,10 @@ class VNIGMA_EXPORT message_variant {
     return std::get_if<T>(&var_);
   }
 
+  buffer as_buffer() const {
+    return vnigma::visit([](auto v) -> buffer { return v.as_buffer(); }, var_);
+  }
+
   std::size_t index() const { return var_.index(); }
 
   operator bool() const { return var_.index() != 0; }

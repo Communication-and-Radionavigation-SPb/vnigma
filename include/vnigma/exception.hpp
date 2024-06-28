@@ -1,3 +1,4 @@
+#include "vnigma/buffer.hpp"
 #if !defined(VNIGMA_EXCEPTION_HPP)
 #define VNIGMA_EXCEPTION_HPP
 
@@ -23,6 +24,8 @@ struct system_error : std::system_error {
   system_error(error_code const& ec = error_code()) : base_type{ec} {}
 
   std::string message() const { return code().message(); }
+
+  buffer as_buffer() const { return vnigma::allocate_buffer(code().message()); }
 
   /**
    * @brief bool operator
