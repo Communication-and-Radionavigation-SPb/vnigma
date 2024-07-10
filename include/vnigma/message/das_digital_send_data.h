@@ -19,7 +19,7 @@ class VNIGMA_EXPORT digital_send_data
 
   std::string payload() const override;
 
-  const device& get_device() const;
+  const device get_device() const;
 
   const digital::data& get_data() const;
 };

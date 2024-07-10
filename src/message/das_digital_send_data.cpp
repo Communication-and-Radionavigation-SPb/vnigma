@@ -25,7 +25,7 @@ std::string digital_send_data::payload() const {
   return send_data::payload();
 }
 
-const device& digital_send_data::get_device() const {
+const device digital_send_data::get_device() const {
   return core::control_message<digital_send_data>::get_device().value();
 }
 
