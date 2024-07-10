@@ -4,7 +4,7 @@
 
 namespace vnigma {
 
-buffer skip(buffer& buf, size_t count) {
+buffer VNIGMA_EXPORT skip(buffer& buf, size_t count) {
   buffer::size_type pos = 0;
   for (size_t i = 0; i < count; i++) {
     pos = buf.find_first_of(',', pos) + 1;

@@ -12,9 +12,6 @@ using namespace vnigma;
 using vnigma::das::serial_send_data;
 }  // namespace vn
 
-using std::optional;
-using std::tuple;
-using std::variant;
 using namespace vnigma::literals;
 
 struct das_sc_sd_p : public das_sd_p {
@@ -54,7 +51,6 @@ TEST_F(SerialSendDataTests, correctly_resolves_buffer) {
   EXPECT_EQ(cmd.port_index(), 3);
   EXPECT_EQ(cmd.get_data().value(), "data");
 }
-
 
 TEST_P(SerialSendDataTests, as_buffer) {
   auto param = GetParam();

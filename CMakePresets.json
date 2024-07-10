@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "hidden": true
+    },
+    {
+      "name": "dev",
+      "displayName": "Development",
+      "inherits": "generator",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VNIGMA_BUILD_TESTS": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "VNIGMA_BUILD_EXAMPLES": "ON",
+        "VNIGMA_SHARED_LIBS": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "description": "Compiles shared library with debugging symbols",
+      "configuration": "Debug",
+      "configurePreset": "dev"
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Build shared library with release mode",
+      "configuration": "Release",
+      "configurePreset": "dev"
+    }
+  ]
+}

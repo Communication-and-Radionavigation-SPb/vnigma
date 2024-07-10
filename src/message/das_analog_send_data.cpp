@@ -30,7 +30,7 @@ const device& analog_send_data::get_device() const {
   return core::control_message<analog_send_data>::get_device().value();
 }
 
-const analog::data& analog_send_data::get_data() const {
+analog::data const& analog_send_data::get_data() const {
   return send_data::get_data().get<analog::data>();
 }
 

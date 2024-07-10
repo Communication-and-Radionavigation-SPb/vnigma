@@ -68,9 +68,5 @@ target_link_libraries(vnigma-tests
         gtest_main
         gmock_main)
 
-if(NOT is_top_level)
-    win_copy_deps_to_target_dir(vnigma-tests vnigma::vnigma)
-endif()
-
 include(GoogleTest)
 gtest_discover_tests(vnigma-tests)

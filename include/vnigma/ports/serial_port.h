@@ -1,3 +1,4 @@
+#include "vnigma/export_shared.h"
 #if !defined(VNIGMA_PORTS_SERIAL_PORT_H)
 #define VNIGMA_PORTS_SERIAL_PORT_H
 /* ----------------------------------- STD ---------------------------------- */
@@ -9,7 +10,7 @@
 /*                             Vnigma serial port                             */
 /* -------------------------------------------------------------------------- */
 namespace vnigma { namespace serial {
-class port {
+class VNIGMA_EXPORT port {
  public:
   uint8_t index;
   uint8_t configuration;

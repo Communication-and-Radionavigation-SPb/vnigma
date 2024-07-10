@@ -1,3 +1,4 @@
+#include "vnigma/export_shared.h"
 #if !defined(VNIGMA_DATA_HPP)
 #define VNIGMA_DATA_HPP
 /* ----------------------------------- STD ---------------------------------- */
@@ -24,7 +25,7 @@ namespace vnigma {
 namespace base {
 template <typename value_type, std::size_t Quantity,
           typename = std::enable_if_t<std::is_arithmetic_v<value_type>>>
-class quntified_data {
+class VNIGMA_EXPORT quntified_data {
   static_assert(Quantity != 0);
 
  public:
@@ -56,6 +57,7 @@ class quntified_data {
       throw make_error(errc::bad_message, "");
     }
     container_t values;
+    values.reserve(quantity);
     /* ----------------------------- extract values ----------------------------- */
     buffer::size_type lpos = 0;
     buffer::size_type rpos = buffer::npos;
@@ -133,7 +135,10 @@ class quntified_data {
 
   reference at(size_type pos) { return data_.at(pos); }
 
-  const std::vector<item_type>& items() const { return data_; }
+  std::vector<item_type> items() const {
+    std::vector<item_type> values(data_);
+    return values;
+  }
 
   const_reference at(size_type pos) const { return data_.at(pos); }
 
@@ -183,7 +188,7 @@ using data = base::quntified_data<bool, 16>;
 
 namespace serial {
 /* ----------------------------- Serial data ----------------------------- */
-class data {
+class VNIGMA_EXPORT data {
  private:
   buffer payload_;
 

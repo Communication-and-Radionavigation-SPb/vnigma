@@ -1,5 +1,5 @@
-#include <vnigma/util/buffer_manip.h>
 #include <vnigma/message/das_send_data.h>
+#include <vnigma/util/buffer_manip.h>
 
 namespace vnigma { namespace das {
 
@@ -28,16 +28,18 @@ send_data::send_data(buffer buf, Type target_type) : var_(std::nullopt) {
     return;
   }
 
-  throw make_error(errc::bad_message, "vnigma::das::send_data unsupported device type data send");
+  throw make_error(errc::bad_message,
+                   "vnigma::das::send_data unsupported device type data send");
 }
 
 std::string send_data::payload() const {
-  return var_.value().visit(overload{[](auto& v) {
-    return (std::string)v;
-  }});
+  return var_.value().visit(overload{[](auto& v)
+                                     {
+                                       return (std::string)v;
+                                     }});
 }
 
-data_variant send_data::get_data() const {
+data_variant const& send_data::get_data() const {
   return var_.value();
 }
 

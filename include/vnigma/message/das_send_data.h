@@ -32,7 +32,7 @@ class VNIGMA_EXPORT send_data {
   virtual std::string payload() const;
 
  protected:
-  data_variant get_data() const;
+  data_variant const& get_data() const;
 
  private:
   optional<data_variant> var_;

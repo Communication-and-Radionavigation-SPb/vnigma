@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <vnigma/message/das_analog_send_data.h>
 #include <vnigma/buffer.hpp>
+#include <vnigma/data.hpp>
 #include <vnigma/message/message_traits.hpp>
 
 #include "das_sd_p.h"
@@ -12,9 +13,6 @@ using namespace vnigma;
 using vnigma::das::analog_send_data;
 }  // namespace vn
 
-using std::optional;
-using std::tuple;
-using std::variant;
 using namespace vnigma::literals;
 
 class AnalogSendDataTest : public ::testing::TestWithParam<das_sd_p> {};
@@ -35,9 +33,12 @@ TEST_F(AnalogSendDataTest, traits) {
 }
 
 TEST_F(AnalogSendDataTest, target_device) {
-  EXPECT_ANY_THROW({ vn::analog_send_data("<DSSSD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
-  EXPECT_ANY_THROW({ vn::analog_send_data("<DSDSD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
-  EXPECT_NO_THROW({ vn::analog_send_data("<DSASD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
+  EXPECT_ANY_THROW(
+      { vn::analog_send_data("<DSSSD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
+  EXPECT_ANY_THROW(
+      { vn::analog_send_data("<DSDSD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
+  EXPECT_NO_THROW(
+      { vn::analog_send_data("<DSASD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
 }
 
 TEST_F(AnalogSendDataTest, correctly_resolves_buffer) {

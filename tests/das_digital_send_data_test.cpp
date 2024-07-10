@@ -1,8 +1,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <vnigma/buffer.hpp>
 #include <vnigma/message/das_digital_send_data.h>
+#include <vnigma/buffer.hpp>
 #include <vnigma/message/message_traits.hpp>
 
 class DigitalSendDataTest : public ::testing::Test {};
@@ -29,15 +29,9 @@ TEST_F(DigitalSendDataTest, traits) {
 }
 
 TEST_F(DigitalSendDataTest, target_device) {
-  EXPECT_ANY_THROW({
-    vn::das::digital_send_data("<DSASD,1,,FFFF\r\n"_mb);
-  });
-  EXPECT_ANY_THROW({
-    vn::das::digital_send_data("<DSSSD,1,,FFFF\r\n"_mb);
-  });
-  EXPECT_NO_THROW({
-    vn::das::digital_send_data("<DSDSD,1,,FFFF\r\n"_mb);
-  });
+  EXPECT_ANY_THROW({ vn::das::digital_send_data("<DSASD,1,,FFFF\r\n"_mb); });
+  EXPECT_ANY_THROW({ vn::das::digital_send_data("<DSSSD,1,,FFFF\r\n"_mb); });
+  EXPECT_NO_THROW({ vn::das::digital_send_data("<DSDSD,1,,FFFF\r\n"_mb); });
 }
 
 TEST_F(DigitalSendDataTest, interface) {
@@ -49,6 +43,8 @@ TEST_F(DigitalSendDataTest, interface) {
   EXPECT_EQ(cmd.payload(), "FFFF");
   // Data
   std::vector<bool> actual = cmd.get_data().items();
+
+  std::cout << actual.size() << std::endl;
 
   EXPECT_THAT(actual, ::testing::SizeIs(16));
   EXPECT_THAT(actual, ::testing::Each(::testing::Eq(true)));
