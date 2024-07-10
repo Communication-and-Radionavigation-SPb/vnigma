@@ -50,6 +50,6 @@ std::string VNIGMA_EXPORT type_to_string(const Type& t) noexcept;
  * contains any known module type
  * @return Type Type of module
  */
-Type type_from_char(const char);
+Type VNIGMA_EXPORT type_from_char(const char);
 
 }}  // namespace vnigma::core

@@ -1,4 +1,3 @@
-#include "vnigma/export_shared.h"
 #if !defined(VNIGMA_DATA_HPP)
 #define VNIGMA_DATA_HPP
 /* ----------------------------------- STD ---------------------------------- */
@@ -16,6 +15,7 @@
 #include <vnigma/exception.hpp>
 #include <vnigma/util/number.hpp>
 #include <vnigma/util/parameter_pack.hpp>
+#include "vnigma/export.h"
 
 /* -------------------------------------------------------------------------- */
 /*                                   Payload                                  */

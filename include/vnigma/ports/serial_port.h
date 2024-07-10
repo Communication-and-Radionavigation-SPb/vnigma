@@ -1,10 +1,10 @@
-#include "vnigma/export_shared.h"
 #if !defined(VNIGMA_PORTS_SERIAL_PORT_H)
 #define VNIGMA_PORTS_SERIAL_PORT_H
 /* ----------------------------------- STD ---------------------------------- */
 #include <cstdint>
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/baud.h>
+#include "vnigma/export.h"
 
 /* -------------------------------------------------------------------------- */
 /*                             Vnigma serial port                             */

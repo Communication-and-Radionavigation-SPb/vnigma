@@ -8,6 +8,7 @@
 #include <string>
 /* -------------------------------- Internal -------------------------------- */
 #include <vnigma/device.h>
+#include <vnigma/export.h>
 #include <vnigma/id_t.h>
 #include <vnigma/types.h>
 #include <vnigma/util/variant.h>

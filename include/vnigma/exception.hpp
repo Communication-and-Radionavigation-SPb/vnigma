@@ -1,4 +1,3 @@
-#include "vnigma/buffer.hpp"
 #if !defined(VNIGMA_EXCEPTION_HPP)
 #define VNIGMA_EXCEPTION_HPP
 
@@ -6,6 +5,7 @@
 #include <string_view>
 #include <system_error>
 #include <tuple>
+#include "vnigma/buffer.hpp"
 
 using error_code = std::error_code;
 using errc = std::errc;

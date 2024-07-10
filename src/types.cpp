@@ -1,10 +1,9 @@
 #include <vnigma/types.h>
 #include <sstream>
-#include "vnigma/export_shared.h"
 
 namespace vnigma { namespace core {
 
-std::string VNIGMA_EXPORT type_to_string(const Type& t) noexcept {
+std::string type_to_string(const Type& t) noexcept {
   if (t == Type::analog)
     return "A";
   if (t == Type::digital)
@@ -16,7 +15,7 @@ std::string VNIGMA_EXPORT type_to_string(const Type& t) noexcept {
   return "U";
 }
 
-Type VNIGMA_EXPORT type_from_char(const char ch) {
+Type type_from_char(const char ch) {
   if (ch == 'A')
     return Type::analog;
   if (ch == 'D')
