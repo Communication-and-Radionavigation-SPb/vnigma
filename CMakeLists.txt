@@ -52,12 +52,8 @@ add_library(vnigma::vnigma ALIAS vnigma)
 # -------------------------------------------------------------------------- */
 
 include(GenerateExportHeader)
-set(export_file_name "export_shared.h")
 
-if(NOT BUILD_SHARED_LIBS)
-  set(export_file_name "export_static.h")
-endif()
-
+set(export_file_name "export.h")
 generate_export_header(vnigma EXPORT_FILE_NAME
                        include/vnigma/${export_file_name})
 
@@ -71,6 +67,7 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 # -------------------------------------------------------------------------- */
 
 include(CMakePackageConfigHelpers)
+
 
 target_sources(
   vnigma
@@ -100,6 +97,7 @@ target_include_directories(
 
 set_target_properties(vnigma PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR}
                                         VERSION ${PROJECT_VERSION})
+
 
 if(VNIGMA_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
   configure_package_config_file(
