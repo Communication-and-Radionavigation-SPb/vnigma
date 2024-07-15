@@ -26,7 +26,7 @@ class VNIGMA_EXPORT serial_send_data
 
   uint8_t port_index() const;
 
-  const device& get_device() const;
+  const device get_device() const;
 
   const serial::data& get_data() const;
 
