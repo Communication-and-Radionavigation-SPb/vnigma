@@ -53,7 +53,7 @@ uint8_t serial_send_data::port_index() const {
   return port_index_;
 }
 
-const device& serial_send_data::get_device() const {
+const device serial_send_data::get_device() const {
   return core::control_message<serial_send_data>::get_device().value();
 }
 
