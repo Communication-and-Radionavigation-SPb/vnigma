@@ -7,8 +7,6 @@
 #include <vnigma/buffer.hpp>
 #include <vnigma/message/message_traits.hpp>
 
-#define Suite SetFrequencyTest
-
 namespace vn {
 using namespace vnigma;
 using vnigma::das::set_frequency;
@@ -30,7 +28,7 @@ struct set_frequency_tp {
 
 class SetFrequencyTest : public ::testing::TestWithParam<set_frequency_tp> {};
 
-TEST_F(Suite, traits) {
+TEST_F(SetFrequencyTest, traits) {
   EXPECT_TRUE(vn::is_command<vn::set_frequency>());
   EXPECT_FALSE(vn::is_response<vn::set_frequency>());
 
@@ -45,7 +43,7 @@ TEST_F(Suite, traits) {
   EXPECT_FALSE(vn::is_data<vn::set_frequency>());
 }
 
-TEST_P(Suite, as_buffer) {
+TEST_P(SetFrequencyTest, as_buffer) {
   auto param = GetParam();
   if (param.err.has_value()) {
     GTEST_SKIP() << "Skipped cause should be tested as failure";
@@ -56,7 +54,7 @@ TEST_P(Suite, as_buffer) {
   EXPECT_EQ(buf, param.buf) << buf << " is not eq to " << param.buf;
 }
 
-TEST_P(Suite, from_buffer) {
+TEST_P(SetFrequencyTest, from_buffer) {
   auto param = GetParam();
   if (param.err.has_value()) {
     GTEST_SKIP() << "Skipped cause should be tested as failure";
@@ -67,13 +65,14 @@ TEST_P(Suite, from_buffer) {
   EXPECT_EQ(buf, param.buf);
 }
 
-TEST_P(Suite, from_buffer_fails) {
+TEST_P(SetFrequencyTest, from_buffer_fails) {
   auto param = GetParam();
   if (!param.err.has_value()) {
     GTEST_SKIP() << "Skipped cause should not fail";
   }
 
-  auto thr = [&]() {
+  auto thr = [&]()
+  {
     try {
       vn::set_frequency cmd(param.buf);
     } catch (const vn::system_error& e) {
@@ -89,7 +88,7 @@ TEST_P(Suite, from_buffer_fails) {
 
 INSTANTIATE_TEST_SUITE_P(  // instantiate
     SequencePeriod,        // suite
-    Suite,                 // cases
+    SetFrequencyTest,      // cases
     ::testing::Values(     // values begin
         set_frequency_tp{"<DSASF,100,0,,-1\r\n"_mb, 100, vn::core::never,
                          vn::device(0, vn::core::analog), std::nullopt},

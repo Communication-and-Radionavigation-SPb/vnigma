@@ -1,5 +1,27 @@
 #include <gtest/gtest.h>
+#include <vnigma/message/das_send_data.h>
 #include <vnigma/data.hpp>
+#include "vnigma/buffer.hpp"
+
+class QuantifiedDataTests : public ::testing::Test {};
+
+TEST_F(QuantifiedDataTests, one) {
+  auto buf = vnigma::allocate_buffer("1");
+  vnigma::base::quntified_data<int, 1> data(buf);
+
+  auto actual = data.items();
+  std::vector<int> expected{1};
+  EXPECT_EQ(actual, expected);
+}
+
+TEST_F(QuantifiedDataTests, two) {
+  auto buf = vnigma::allocate_buffer("1,2");
+  vnigma::base::quntified_data<int, 2> data(buf);
+
+  auto actual = data.items();
+  std::vector<int> expected{1, 2};
+  EXPECT_EQ(actual, expected);
+}
 
 class AnalogDataTests : public ::testing::Test {};
 
@@ -24,12 +46,21 @@ TEST_F(AnalogDataTests, at_port) {
 
 TEST_F(AnalogDataTests, as_vector) {
   using T = vnigma::analog::data::item_type;
-  std::vector<T> items{1,2,3,4,5,6,7,8};
+  std::vector<T> items{1, 2, 3, 4, 5, 6, 7, 8};
   vnigma::analog::data data(items);
 
   std::vector<T> actual = data.items();
 
   EXPECT_EQ(actual, items);
+}
+TEST_F(AnalogDataTests, from_buffer) {
+  auto buf = vnigma::allocate_buffer("1,2,3,4,5,6,7,8");
+  vnigma::analog::data data(buf);
+
+  using T = vnigma::analog::data::item_type;
+  std::vector<T> expected{1, 2, 3, 4, 5, 6, 7, 8};
+  auto actual = data.items();
+  EXPECT_EQ(actual, expected);
 }
 
 class DigitalDataTests : public ::testing::Test {};
@@ -50,8 +81,7 @@ TEST_F(DigitalDataTests, at_port) {
                        true, false, true, false, true, false, true, false};
 
   vnigma::digital::data data(items);
-  for (size_t i = 0; i < vnigma::digital::data::quantity; i++)
-  {
+  for (size_t i = 0; i < vnigma::digital::data::quantity; i++) {
     bool expected = i % 2 > 0 ? false : true;
     EXPECT_EQ(data.at(i), expected);
   }
@@ -66,4 +96,15 @@ TEST_F(DigitalDataTests, as_vector) {
   std::vector<T> actual = data.items();
 
   EXPECT_EQ(actual, items);
+}
+
+TEST_F(DigitalDataTests, from_buffer) {
+  auto buf = vnigma::allocate_buffer("FFFF");
+  vnigma::digital::data data(buf);
+
+  using T = vnigma::digital::data::item_type;
+  std::vector<T> expected{true, true, true, true, true, true, true, true,
+                          true, true, true, true, true, true, true, true};
+  auto actual = data.items();
+  EXPECT_EQ(actual, expected);
 }

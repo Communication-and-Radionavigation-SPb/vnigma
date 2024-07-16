@@ -46,10 +46,10 @@ TEST_F(SerialSendDataTests, correctly_resolves_buffer) {
   EXPECT_EQ(cmd.get_device().id(), 1);
   EXPECT_EQ(cmd.get_device().type(), vn::Type::serial);
 
-  EXPECT_EQ(cmd.payload(), "data");
+  EXPECT_EQ(cmd.payload(), "data\r\n");
 
   EXPECT_EQ(cmd.port_index(), 3);
-  EXPECT_EQ(cmd.get_data().value(), "data");
+  EXPECT_EQ(cmd.get_data().value(), "data\r\n");
 }
 
 TEST_P(SerialSendDataTests, as_buffer) {
@@ -74,4 +74,4 @@ INSTANTIATE_TEST_SUITE_P(DasSD, SerialSendDataTests,
                          ::testing::Values(das_sc_sd_p{
                              "<DSSSD,1,3,$GPHDT,274.07,T*03\r\n"_mb,
                              mock::f_serial(),
-                             vn::serial::data("$GPHDT,274.07,T*03"), 3}));
+                             vn::serial::data("$GPHDT,274.07,T*03\r\n"), 3}));

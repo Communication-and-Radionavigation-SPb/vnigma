@@ -32,17 +32,20 @@ TEST_F(AnalogSendDataTest, traits) {
   EXPECT_TRUE(vn::is_data<vn::analog_send_data>());
 }
 
+TEST_F(AnalogSendDataTest, serial_device_fails) {
+  EXPECT_ANY_THROW({ vn::analog_send_data("<DSSSD,1,,1,2,3,4,5,6,7,8"_mb); });
+}
+
+TEST_F(AnalogSendDataTest, digital_device_fails) {
+  EXPECT_ANY_THROW({ vn::analog_send_data("<DSDSD,1,,1,2,3,4,5,6,7,7"_mb); });
+}
 TEST_F(AnalogSendDataTest, target_device) {
-  EXPECT_ANY_THROW(
-      { vn::analog_send_data("<DSSSD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
-  EXPECT_ANY_THROW(
-      { vn::analog_send_data("<DSDSD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
-  EXPECT_NO_THROW(
-      { vn::analog_send_data("<DSASD,1,,1,1,1,1,1,1,1,1\r\n"_mb); });
+  // Valid with analog
+  EXPECT_NO_THROW({ vn::analog_send_data("<DSASD,1,,1,2,3,4,5,6,7,8"_mb); });
 }
 
 TEST_F(AnalogSendDataTest, correctly_resolves_buffer) {
-  vn::analog_send_data cmd("<DSASD,1,,1,2,3,4,5,6,7,8\r\n"_mb);
+  vn::analog_send_data cmd("<DSASD,1,,1,2,3,4,5,6,7,8\0"_mb);
 
   EXPECT_EQ(cmd.get_device().id(), 1);
   EXPECT_EQ(cmd.get_device().type(), vnigma::Type::analog);

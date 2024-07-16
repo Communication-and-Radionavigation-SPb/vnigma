@@ -12,18 +12,16 @@
 #include <vnigma/buffer.hpp>
 #include <vnigma/message/control_message.hpp>
 
-#define Suite ControlMessageTest
-
 namespace vn = vnigma;
 using namespace vn::literals;
 
-TEST(Suite, das_gc_from_buffer) {
-  vn::buffer buf = "<DSSGC,100,1\r\n"_mb;
+TEST(ControlMessageTest, das_gc_from_buffer) {
+  vn::buffer buf = "<DSSGC,100,1\0"_mb;
   vn::control_message<vn::das::get_config> msg(buf);
 }
 
-TEST(Suite, das_sf_from_buffer) {
-  vn::buffer buf = "<DSASF,100,1,,-1\r\n";
+TEST(ControlMessageTest, das_sf_from_buffer) {
+  vn::buffer buf = "<DSASF,100,1,,-1\0"_mb;
   vn::control_message<vn::das::set_frequency> msg(buf);
 }
 
@@ -37,7 +35,7 @@ TYPED_TEST_P(DasFailsTest, empty) {
 }
 
 TYPED_TEST_P(DasFailsTest, no_prefix) {
-  vn::buffer buf = "\r\n"_mb;
+  vn::buffer buf = "\0"_mb;
   EXPECT_THROW(
       {
         try {
@@ -53,8 +51,8 @@ TYPED_TEST_P(DasFailsTest, no_prefix) {
       vn::system_error);
 }
 
-TYPED_TEST_P(DasFailsTest, no_lf) {
-  vn::buffer buf = "<\r"_mb;
+TYPED_TEST_P(DasFailsTest, no_message_ending) {
+  vn::buffer buf = "<"_mb;
 
   EXPECT_THROW(
       {
@@ -71,26 +69,8 @@ TYPED_TEST_P(DasFailsTest, no_lf) {
       vn::system_error);
 }
 
-TYPED_TEST_P(DasFailsTest, no_cr) {
-  vn::buffer buf = "<\n"_mb;
-
-  EXPECT_THROW(
-      {
-        try {
-          vn::control_message<TypeParam> msg(buf);
-        } catch (const vn::system_error& e) {
-          std::string error = e.what();
-          std::string match = "no carret return: Bad message";
-          EXPECT_TRUE(error.find(match) != std::string::npos)
-              << error << " do not contains " << match;
-          throw;
-        }
-      },
-      vn::system_error);
-}
-
 TYPED_TEST_P(DasFailsTest, no_protocol) {
-  vn::buffer buf = "<\r\n"_mb;
+  vn::buffer buf = "<\0"_mb;
 
   EXPECT_THROW(
       {
@@ -100,9 +80,8 @@ TYPED_TEST_P(DasFailsTest, no_protocol) {
           std::string error = e.what();
           std::string match = "invalid protocol version '': Protocol error";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -110,7 +89,7 @@ TYPED_TEST_P(DasFailsTest, no_protocol) {
 }
 
 TYPED_TEST_P(DasFailsTest, protocol_missmatch) {
-  vn::buffer buf = "<**\r\n"_mb;
+  vn::buffer buf = "<**\0"_mb;
 
   EXPECT_THROW(
       {
@@ -120,9 +99,8 @@ TYPED_TEST_P(DasFailsTest, protocol_missmatch) {
           std::string error = e.what();
           std::string match = "invalid protocol version '**': Protocol error";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -139,9 +117,8 @@ TYPED_TEST_P(DasFailsTest, device_clarifier) {
           std::string error = e.what();
           std::string match = "no device clarifier: Protocol error";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -175,9 +152,8 @@ TYPED_TEST_P(DasFailsTest, format_token_apsent) {
           std::string match = "format token apsent: Bad message";
           EXPECT_EQ(e.code(), errc::bad_message);
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -207,9 +183,8 @@ TYPED_TEST_P(DasFailsTest, format_token_not_matches) {
           std::string match =
               "message format token not matches target one: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -222,8 +197,7 @@ TYPED_TEST_P(DasFailsTest, no_uid) {
     GTEST_SKIP() << "Skipeed cause not command";
   }
   std::stringstream ss;
-  ss << "<DSS" << fmt << ","
-     << "\r\n";
+  ss << "<DSS" << fmt << "," << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -235,9 +209,8 @@ TYPED_TEST_P(DasFailsTest, no_uid) {
           std::string error = e.what();
           std::string match = "uuid apsent: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -250,8 +223,7 @@ TYPED_TEST_P(DasFailsTest, invalid_uid) {
   if constexpr (!vn::is_command<TypeParam>()) {
     GTEST_SKIP() << "Skipeed cause " << fmt << " is not command";
   }
-  ss << "<DSS" << fmt << ",*"
-     << "\r\n";
+  ss << "<DSS" << fmt << ",*" << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -263,9 +235,8 @@ TYPED_TEST_P(DasFailsTest, invalid_uid) {
           std::string error = e.what();
           std::string match = "uuid invalid: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -295,9 +266,8 @@ TYPED_TEST_P(DasFailsTest, no_device_id) {
           std::string error = e.what();
           std::string match = "device identifier apsent: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -314,8 +284,7 @@ TYPED_TEST_P(DasFailsTest, device_id_empty) {
   if constexpr (vn::is_command<TypeParam>()) {
     ss << ",242";
   }
-  ss << ","
-     << "\r\n";
+  ss << "," << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -327,9 +296,8 @@ TYPED_TEST_P(DasFailsTest, device_id_empty) {
           std::string error = e.what();
           std::string match = "device identifier empty: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -347,8 +315,7 @@ TYPED_TEST_P(DasFailsTest, device_id_invalid) {
   if constexpr (vn::is_command<TypeParam>()) {
     ss << ",242";
   }
-  ss << ",*"
-     << "\r\n";
+  ss << ",*" << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -360,9 +327,8 @@ TYPED_TEST_P(DasFailsTest, device_id_invalid) {
           std::string error = e.what();
           std::string match = "device identifier invalid: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -381,8 +347,7 @@ TYPED_TEST_P(DasFailsTest, no_port_field) {
   if constexpr (vn::is_command<TypeParam>()) {
     ss << ",242";
   }
-  ss << ",1"
-     << "\r\n";
+  ss << ",1" << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -394,9 +359,8 @@ TYPED_TEST_P(DasFailsTest, no_port_field) {
           std::string error = e.what();
           std::string match = "port field missed: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -413,8 +377,7 @@ TYPED_TEST_P(DasFailsTest, port_field_empty) {
   if constexpr (vn::is_command<TypeParam>()) {
     ss << ",242";
   }
-  ss << ",1,"
-     << "\r\n";
+  ss << ",1," << "\r\n";
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
 
@@ -426,9 +389,8 @@ TYPED_TEST_P(DasFailsTest, port_field_empty) {
           std::string error = e.what();
           std::string match = "port field empty: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -462,9 +424,8 @@ TYPED_TEST_P(DasFailsTest, port_missed_field_invalid) {
           std::string error = e.what();
           std::string match = "invalid port field: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -496,9 +457,8 @@ TYPED_TEST_P(DasFailsTest, port_scoped_field_invalid) {
           std::string error = e.what();
           std::string match = "invalid port field: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -545,9 +505,8 @@ TYPED_TEST_P(DasFailsTest, payload_apsent) {
           std::string error = e.what();
           std::string match = "payload apsent: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
@@ -583,8 +542,7 @@ TYPED_TEST_P(DasFailsTest, payload_empty) {
   if constexpr (!vn::is_service<TypeParam>()) {
     ss << ",1";
   }
-  ss << port << ","
-     << "\r\n";
+  ss << port << "," << "\r\n";
   std::cout << ss.str() << std::endl;
   std::string payload = ss.str();
   vn::buffer buf(payload.c_str());
@@ -597,16 +555,15 @@ TYPED_TEST_P(DasFailsTest, payload_empty) {
           std::string error = e.what();
           std::string match = "payload empty: Bad message";
           EXPECT_TRUE(error.find(match) != std::string::npos)
-              << "'" << error << "'"
-              << " do not contains "
-              << "'" << match << "'";
+              << "'" << error << "'" << " do not contains " << "'" << match
+              << "'";
           throw;
         }
       },
       vn::system_error);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(DasFailsTest, empty, no_prefix, no_lf, no_cr,
+REGISTER_TYPED_TEST_SUITE_P(DasFailsTest, empty, no_prefix, no_message_ending,
                             no_protocol, protocol_missmatch, device_clarifier,
                             device_unknown, format_token_apsent,
                             format_token_not_matches, no_uid, invalid_uid,

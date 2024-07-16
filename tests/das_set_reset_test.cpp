@@ -46,7 +46,6 @@ TEST_P(SetResetTest, from_buffer) {
 INSTANTIATE_TEST_SUITE_P(
     DasSetReset, SetResetTest,
     ::testing::Values(
-        das_sr_p{100, "<DSSSR,100,1\r\n"_mb, vn::device(1, vn::core::serial)},
-        das_sr_p{100, "<DSASR,100,1\r\n"_mb, vn::device(1, vn::core::analog)},
-        das_sr_p{100, "<DSDSR,100,1\r\n"_mb,
-                 vn::device(1, vn::core::digital)}));
+        das_sr_p{100, "<DSSSR,100,1"_mb, vn::device(1, vn::core::serial)},
+        das_sr_p{100, "<DSASR,100,1"_mb, vn::device(1, vn::core::analog)},
+        das_sr_p{100, "<DSDSR,100,1"_mb, vn::device(1, vn::core::digital)}));

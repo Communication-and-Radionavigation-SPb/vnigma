@@ -1,3 +1,4 @@
+#include <iostream>
 #if !defined(VNIGMA_CONTROL_MESSAGE)
 #define VNIGMA_CONTROL_MESSAGE
 
@@ -32,15 +33,6 @@ class VNIGMA_EXPORT control_message {
     if (buf.at(0) != '<') {
       error(errc::bad_message, "wrong prefix");
     }
-    auto lf_pos = buf.rfind('\n');
-    auto cr_pos = buf.rfind('\r');
-
-    if (lf_pos != (buf.size() - 1)) {
-      error(errc::bad_message, "no line ending");
-    }
-    if (cr_pos != (buf.size() - 2)) {
-      error(errc::bad_message, "no carret return");
-    }
     /* ------------------------ retrieve target protocol ------------------------ */
     std::string protocol = "";
     if constexpr (das_related<Message>()) {
@@ -51,7 +43,6 @@ class VNIGMA_EXPORT control_message {
     }
     /* ------------------------ validate protocol version ----------------------- */
     adjust_left(buf, 1, errc::bad_message, "message is too short");
-    adjust_right(buf, 2, errc::bad_message, "message is too short");
     if (buf.compare(0, 2, protocol) != 0) {
       std::stringstream ss;
       ss << "invalid protocol version '" << buf.substr(0, 2) << "'";
