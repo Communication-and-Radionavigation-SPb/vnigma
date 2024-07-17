@@ -16,7 +16,7 @@ set_frequency::set_frequency(buffer buf)
       base(buf),
       period(core::never) {
   // trim terminating characters
-  buf = trim_buffer(buf);
+  // buf = trim_buffer(buf);
 
   // find bound of frequency value
   buffer::size_type lpos = buf.rfind(',');

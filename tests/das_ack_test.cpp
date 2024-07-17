@@ -61,7 +61,7 @@ TEST_P(AckScopedTests, from_buffer) {
 
 INSTANTIATE_TEST_SUITE_P(DasSD, AckScopedTests,
                          ::testing::Values(das_ack_test{
-                             "<DSAAK,10004,1,,WRONG_DATA\0"_mb,
+                             "<DSAAK,10004,1,,WRONG_DATA"_mb,
                              mock::f_analog(),
                              10004,
                              "WRONG_DATA"_mb,

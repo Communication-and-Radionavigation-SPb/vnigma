@@ -2,11 +2,9 @@
 #include <vnigma/baud.h>
 #include <vnigma/util/binary.hpp>
 
-#define Suite BaudTests
-
 namespace vns = vnigma::serial;
 
-TEST(Suite, bin_baud) {
+TEST(BaudTests, bin_baud) {
   const auto v2400 = vnigma::binary<1>::value;
   const auto v4800 = vnigma::binary<10>::value;
   const auto v9600 = vnigma::binary<11>::value;

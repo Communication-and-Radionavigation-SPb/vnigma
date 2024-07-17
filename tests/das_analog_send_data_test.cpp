@@ -45,7 +45,7 @@ TEST_F(AnalogSendDataTest, target_device) {
 }
 
 TEST_F(AnalogSendDataTest, correctly_resolves_buffer) {
-  vn::analog_send_data cmd("<DSASD,1,,1,2,3,4,5,6,7,8\0"_mb);
+  vn::analog_send_data cmd("<DSASD,1,,1,2,3,4,5,6,7,8"_mb);
 
   EXPECT_EQ(cmd.get_device().id(), 1);
   EXPECT_EQ(cmd.get_device().type(), vnigma::Type::analog);
@@ -63,8 +63,8 @@ TEST_P(AnalogSendDataTest, as_buffer) {
 
   vn::analog_send_data cmd(param.dev, param.data);
 
-  // EXPECT_EQ(cmd.as_buffer(), param.buf)
-  // << cmd.as_buffer() << " is not equal to " << param.buf;
+  EXPECT_EQ(cmd.as_buffer(), param.buf)
+      << cmd.as_buffer() << " is not equal to " << param.buf;
 }
 
 TEST_P(AnalogSendDataTest, from_buffer) {
@@ -72,13 +72,13 @@ TEST_P(AnalogSendDataTest, from_buffer) {
 
   vn::analog_send_data cmd(param.buf);
 
-  // EXPECT_EQ(cmd.as_buffer(), param.buf)
-  // << cmd.as_buffer() << "not equal to " << param.buf;
+  EXPECT_EQ(cmd.as_buffer(), param.buf)
+      << cmd.as_buffer() << "not equal to " << param.buf;
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DasSD, AnalogSendDataTest,
     ::testing::Values(das_sd_p{
-        "<DSASD,1,,1506,0000,3279,1235,0194,2527,1215,2396\r\n"_mb,
+        "<DSASD,1,,1506,0000,3279,1235,0194,2527,1215,2396"_mb,
         mock::f_analog(),
         vn::analog::data(1506, 0, 3279, 1235, 194, 2527, 1215, 2396)}));

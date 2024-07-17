@@ -9,7 +9,6 @@ send_data::send_data(data_variant data) : var_(std::move(data)) {}
 send_data::send_data(buffer buf, Type target_type) : var_(std::nullopt) {
   std::string debug = "";
   debug = std::string(buf.begin(), buf.end());
-  std::cout << "After trim: " << debug << std::endl;
 
   if (target_type == Type::serial) {
     var_.emplace(serial::data(skip(buf, 3)));
@@ -20,7 +19,6 @@ send_data::send_data(buffer buf, Type target_type) : var_(std::nullopt) {
   buf = skip(buf, 3);
 
   debug = std::string(buf.begin(), buf.end());
-  std::cout << "After skip: " << debug << std::endl;
 
   if (target_type == Type::analog) {
     var_.emplace(analog::data(buf));

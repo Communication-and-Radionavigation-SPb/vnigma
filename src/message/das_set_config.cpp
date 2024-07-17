@@ -20,8 +20,6 @@ set_config::set_config(uuid id, device dev, uint8_t index,
 
 set_config::set_config(buffer buf)
     : core::control_message<set_config>(buf), base(buf), p_(0, 0xfc) {
-  // remove terminating simbols
-  buf = trim_buffer(buf);
   // skip header and uid
   buf = skip(buf, 3);
   // declare bounding variables

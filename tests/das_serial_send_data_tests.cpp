@@ -55,19 +55,34 @@ TEST_F(SerialSendDataTests, correctly_resolves_buffer) {
 TEST_P(SerialSendDataTests, as_buffer) {
   auto param = GetParam();
 
+  std::string expected(param.buf.begin(), param.buf.end());
+
   vn::serial_send_data cmd(param.index, param.dev, param.data);
-  EXPECT_EQ(cmd.get_device(), param.dev);
-  EXPECT_EQ(cmd.as_buffer(), param.buf)
+  auto buf = cmd.as_buffer();
+  std::string actual(buf.begin(), buf.end());
+
+  EXPECT_EQ(cmd.get_device().id(), param.dev.id());
+  EXPECT_EQ(cmd.get_device().type(), param.dev.type());
+  EXPECT_EQ(actual, expected)
       << cmd.as_buffer() << " is not equal to " << param.buf;
+}
+
+TEST_F(SerialSendDataTests, from_buffer_str) {
+  auto buf = vnigma::allocate_buffer("<DSSSD,1,3,$GPHDT,274.07,T*03");
+  vn::serial_send_data msg(buf);
+
+  ASSERT_EQ(msg.payload(), "$GPHDT,274.07,T*03");
 }
 
 TEST_P(SerialSendDataTests, from_buffer) {
   auto param = GetParam();
 
   vn::serial_send_data cmd(param.buf);
+  auto buf = cmd.as_buffer();
+  auto actual = std::string(buf.begin(), buf.end());
+  auto expected = std::string(param.buf.begin(), param.buf.end());
 
-  EXPECT_EQ(cmd.as_buffer(), param.buf)
-      << cmd.as_buffer() << "not equal to " << param.buf;
+  EXPECT_EQ(actual, expected) << actual << "not equal to " << expected;
 }
 
 INSTANTIATE_TEST_SUITE_P(DasSD, SerialSendDataTests,

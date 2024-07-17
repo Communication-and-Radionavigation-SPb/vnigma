@@ -259,7 +259,7 @@ class VNIGMA_EXPORT control_message {
     if constexpr (has_payload<Message>()) {
       ss << "," << message.payload();
     }
-    ss << "\r\n";
+    // ss << "\r\n";
     return ss;
   }
   /* ------------------------------- Attributes ------------------------------- */

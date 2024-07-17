@@ -13,7 +13,10 @@ void debug_found_pos(buffer& buf, buffer::size_type pos);
 buffer skip(buffer& buf, size_t count);
 
 inline buffer trim_buffer(buffer& buf) {
-  return buf.substr(0, buf.size() - 2);
+  // return buf.substr(0, buf.size() - 2);
+  // Due to changes in protocol termination symobls
+  // replaced with '\0', so this function should do nothing
+  return buf;
 }
 
 }  // namespace vnigma

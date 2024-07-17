@@ -93,16 +93,15 @@ TEST_P(SetConfigTest, from_buffer) {
 
 INSTANTIATE_TEST_SUITE_P(
     DasSetConfig, SetConfigTest,
-    ::testing::Values(
-        das_sc_p{232, "<DSASC,232,1,1,F7\r\n"_mb, mock::f_analog(), 1,
-                 std::nullopt},
-        das_sc_p{232, "<DSASC,232,1,4,F2\r\n"_mb, mock::f_analog(),
-                 vn::serial::port(4, vn::binary<11110010>::value),
-                 std::nullopt},
-        das_sc_p{232, "<DSASC,232,1,2,F7\r\n"_mb, mock::f_analog(),
-                 vn::serial::port(2, vn::binary<11110111>::value),
-                 std::nullopt},
-        das_sc_p{
-            232, "<DSASC,232,1,1,F7\r\n"_mb, mock::f_analog(),
-            std::make_tuple<uint8_t, uint8_t>(1, vn::binary<11110111>::value),
-            std::nullopt}));
+    ::testing::Values(das_sc_p{232, "<DSASC,232,1,1,F7"_mb, mock::f_analog(), 1,
+                               std::nullopt},
+                      das_sc_p{232, "<DSASC,232,1,4,F2"_mb, mock::f_analog(),
+                               vn::serial::port(4, vn::binary<11110010>::value),
+                               std::nullopt},
+                      das_sc_p{232, "<DSASC,232,1,2,F7"_mb, mock::f_analog(),
+                               vn::serial::port(2, vn::binary<11110111>::value),
+                               std::nullopt},
+                      das_sc_p{232, "<DSASC,232,1,1,F7"_mb, mock::f_analog(),
+                               std::make_tuple<uint8_t, uint8_t>(
+                                   1, vn::binary<11110111>::value),
+                               std::nullopt}));

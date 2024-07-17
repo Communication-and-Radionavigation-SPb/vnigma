@@ -77,27 +77,28 @@ TEST_P(BufferConvertTest, converts) {
         return std::nullopt;
       }});
 
-  EXPECT_TRUE(buf.has_value());
-  EXPECT_EQ(buf, param);
+  ASSERT_TRUE(buf.has_value());
+  EXPECT_EQ(std::string(buf->begin(), buf->end()),
+            std::string(param.begin(), param.end()));
 }
 
 INSTANTIATE_TEST_SUITE_P(
     Buffer, BufferConvertTest,
     ::testing::Values(
         // set frequency
-        "<DSASF,100,1,,500\r\n"_mb,   //
-        "<DSDSF,100,1,,1000\r\n"_mb,  //
+        "<DSASF,100,1,,500"_mb,   //
+        "<DSDSF,100,1,,1000"_mb,  //
         // set config
-        "<DSSSC,100,2,5,FC\r\n"_mb,  //
+        "<DSSSC,100,2,5,FC"_mb,  //
         // send data
-        "<DSASD,0,,1506,0000,3278,1235,0194,2527,1215,2396\r\n"_mb,  //
-        "<DSDSD,5,,44ED\r\n"_mb,                                     //
-        "<DSSSD,3,1,$GPHDT,127.09,T*03\r\n"_mb,                      //
+        "<DSASD,0,,1506,0000,3278,1235,0194,2527,1215,2396"_mb,  //
+        "<DSDSD,5,,44ED"_mb,                                     //
+        "<DSSSD,3,1,$GPHDT,127.09,T*03"_mb,                      //
         // set reset
-        "<DSSSR,100005,1\r\n"_mb,            //
-        "<DSASR,100005,1\r\n"_mb,            //
-        "<DSDSR,100005,1\r\n"_mb,            //
-        "<DSSGC,1003,2\r\n"_mb,              //
-        "<DSSAK,1003,2,,WRONG_DATA\r\n"_mb,  //
-        "<DSXSN,15aet8gg\r\n"_mb             //
+        "<DSSSR,100005,1"_mb,            //
+        "<DSASR,100005,1"_mb,            //
+        "<DSDSR,100005,1"_mb,            //
+        "<DSSGC,1003,2"_mb,              //
+        "<DSSAK,1003,2,,WRONG_DATA"_mb,  //
+        "<DSXSN,15aet8gg"_mb             //
         ));

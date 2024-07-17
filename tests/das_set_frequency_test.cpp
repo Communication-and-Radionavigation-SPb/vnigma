@@ -19,7 +19,7 @@ using std::tuple;
 using namespace vn::literals;
 
 struct set_frequency_tp {
-  vn::buffer buf;
+  std::string buf;
   vn::uuid uid;
   vnigma::core::send_period period;
   vnigma::device dev;
@@ -45,36 +45,55 @@ TEST_F(SetFrequencyTest, traits) {
 
 TEST_P(SetFrequencyTest, as_buffer) {
   auto param = GetParam();
-  if (param.err.has_value()) {
-    GTEST_SKIP() << "Skipped cause should be tested as failure";
-  }
+  auto expected = param.buf;
+
   vn::set_frequency cmd(param.uid, param.dev, param.period);
   auto buf = cmd.as_buffer();
+  auto actual = std::string(buf.begin(), buf.end());
 
-  EXPECT_EQ(buf, param.buf) << buf << " is not eq to " << param.buf;
+  EXPECT_EQ(actual, expected);
 }
 
 TEST_P(SetFrequencyTest, from_buffer) {
   auto param = GetParam();
-  if (param.err.has_value()) {
-    GTEST_SKIP() << "Skipped cause should be tested as failure";
-  }
+  auto inbuf = vn::allocate_buffer(param.buf);
 
-  vn::set_frequency cmd(param.buf);
+  vn::set_frequency cmd(inbuf);
   auto buf = cmd.as_buffer();
-  EXPECT_EQ(buf, param.buf);
+  std::string out(buf.begin(), buf.end());
+  EXPECT_EQ(out, param.buf);
 }
 
-TEST_P(SetFrequencyTest, from_buffer_fails) {
+INSTANTIATE_TEST_SUITE_P(  // instantiate
+    SequencePeriod,        // suite
+    SetFrequencyTest,      // cases
+    ::testing::Values(     // values begin
+        set_frequency_tp{"<DSASF,100,0,,-1", 100, vn::core::never,
+                         vn::device(0, vn::core::analog), std::nullopt},
+        set_frequency_tp{"<DSDSF,100,1,,500", 100, vn::core::fast,
+                         vn::device(1, vn::core::digital), std::nullopt},
+        set_frequency_tp{"<DSASF,100,2,,1000", 100, vn::core::normal,
+                         vn::device(2, vn::core::analog), std::nullopt},
+        set_frequency_tp{"<DSASF,100,3,,2000", 100, vn::core::slow,
+                         vn::device(3, vn::core::analog), std::nullopt},
+        set_frequency_tp{"<DSASF,100,4,,5000", 100, vn::core::slower,
+                         vn::device(4, vn::core::analog), std::nullopt},
+        set_frequency_tp{"<DSASF,100,5,,10000", 100, vn::core::slowest,
+                         vn::device(5, vn::core::analog), std::nullopt}
+        // values end
+        ));
+
+class SetFrequencyErrTest : public ::testing::TestWithParam<set_frequency_tp> {
+};
+
+TEST_P(SetFrequencyErrTest, from_buffer_fails) {
   auto param = GetParam();
-  if (!param.err.has_value()) {
-    GTEST_SKIP() << "Skipped cause should not fail";
-  }
+  auto buf = vn::allocate_buffer(param.buf);
 
   auto thr = [&]()
   {
     try {
-      vn::set_frequency cmd(param.buf);
+      vn::set_frequency cmd(buf);
     } catch (const vn::system_error& e) {
       std::string error = e.what();
       EXPECT_EQ(e.code(), std::get<0>(param.err.value()));
@@ -88,21 +107,9 @@ TEST_P(SetFrequencyTest, from_buffer_fails) {
 
 INSTANTIATE_TEST_SUITE_P(  // instantiate
     SequencePeriod,        // suite
-    SetFrequencyTest,      // cases
+    SetFrequencyErrTest,   // cases
     ::testing::Values(     // values begin
-        set_frequency_tp{"<DSASF,100,0,,-1\r\n"_mb, 100, vn::core::never,
-                         vn::device(0, vn::core::analog), std::nullopt},
-        set_frequency_tp{"<DSDSF,100,1,,500\r\n"_mb, 100, vn::core::fast,
-                         vn::device(1, vn::core::digital), std::nullopt},
-        set_frequency_tp{"<DSASF,100,2,,1000\r\n"_mb, 100, vn::core::normal,
-                         vn::device(2, vn::core::analog), std::nullopt},
-        set_frequency_tp{"<DSASF,100,3,,2000\r\n"_mb, 100, vn::core::slow,
-                         vn::device(3, vn::core::analog), std::nullopt},
-        set_frequency_tp{"<DSASF,100,4,,5000\r\n"_mb, 100, vn::core::slower,
-                         vn::device(4, vn::core::analog), std::nullopt},
-        set_frequency_tp{"<DSASF,100,5,,10000\r\n"_mb, 100, vn::core::slowest,
-                         vn::device(5, vn::core::analog), std::nullopt},
-        set_frequency_tp{"<DSASF,100,5,,*\r\n"_mb, 100, vn::core::slowest,
+        set_frequency_tp{"<DSASF,100,5,,*", 100, vn::core::slowest,
                          vn::device(5, vn::core::analog),
                          std::make_tuple(errc::bad_message,
                                          "vnigma::das::set_frequency invalid "

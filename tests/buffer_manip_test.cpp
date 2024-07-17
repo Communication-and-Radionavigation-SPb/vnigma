@@ -18,12 +18,12 @@ class BufferManipTest : public ::testing::TestWithParam<buffer_manip_test> {};
 
 TEST_F(BufferManipTest, trim_buffer) {
   vn::buffer buf = "content\r\n"_mb;
-  vn::buffer exp = "content"_mb;
+  vn::buffer exp = "content\r\n"_mb;
 
   EXPECT_EQ(vn::trim_buffer(buf), exp);
 
   buf = "\r\n"_mb;
-  exp = ""_mb;
+  exp = "\r\n"_mb;
 
   EXPECT_EQ(vn::trim_buffer(buf), exp);
 
