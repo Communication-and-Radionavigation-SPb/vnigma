@@ -7,8 +7,6 @@ namespace vnigma { namespace das {
 send_data::send_data(data_variant data) : var_(std::move(data)) {}
 
 send_data::send_data(buffer buf, Type target_type) : var_(std::nullopt) {
-  std::string debug = "";
-  debug = std::string(buf.begin(), buf.end());
 
   if (target_type == Type::serial) {
     var_.emplace(serial::data(skip(buf, 3)));
@@ -17,8 +15,6 @@ send_data::send_data(buffer buf, Type target_type) : var_(std::nullopt) {
 
   // skip header, module index, missed port
   buf = skip(buf, 3);
-
-  debug = std::string(buf.begin(), buf.end());
 
   if (target_type == Type::analog) {
     var_.emplace(analog::data(buf));

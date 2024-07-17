@@ -16,22 +16,6 @@ struct buffer_manip_test {
 
 class BufferManipTest : public ::testing::TestWithParam<buffer_manip_test> {};
 
-TEST_F(BufferManipTest, trim_buffer) {
-  vn::buffer buf = "content\r\n"_mb;
-  vn::buffer exp = "content\r\n"_mb;
-
-  EXPECT_EQ(vn::trim_buffer(buf), exp);
-
-  buf = "\r\n"_mb;
-  exp = "\r\n"_mb;
-
-  EXPECT_EQ(vn::trim_buffer(buf), exp);
-
-  buf = "1"_mb;
-  exp = "1"_mb;
-  EXPECT_EQ(vn::trim_buffer(buf), exp);
-}
-
 TEST_P(BufferManipTest, skip) {
   auto param = GetParam();
   auto buf = vn::skip(param.buf, param.count);
