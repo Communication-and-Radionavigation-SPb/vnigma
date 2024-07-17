@@ -29,13 +29,13 @@ TEST_F(DigitalSendDataTest, traits) {
 }
 
 TEST_F(DigitalSendDataTest, target_device) {
-  EXPECT_ANY_THROW({ vn::das::digital_send_data("<DSASD,1,,FFFF\r\n"_mb); });
-  EXPECT_ANY_THROW({ vn::das::digital_send_data("<DSSSD,1,,FFFF\r\n"_mb); });
-  EXPECT_NO_THROW({ vn::das::digital_send_data("<DSDSD,1,,FFFF\r\n"_mb); });
+  EXPECT_ANY_THROW({ vn::das::digital_send_data("<DSASD,1,,FFFF"_mb); });
+  EXPECT_ANY_THROW({ vn::das::digital_send_data("<DSSSD,1,,FFFF"_mb); });
+  EXPECT_NO_THROW({ vn::das::digital_send_data("<DSDSD,1,,FFFF"_mb); });
 }
 
 TEST_F(DigitalSendDataTest, interface) {
-  vn::das::digital_send_data cmd("<DSDSD,1,,FFFF\r\n"_mb);
+  vn::das::digital_send_data cmd("<DSDSD,1,,FFFF"_mb);
   // Device
   EXPECT_EQ(cmd.get_device().id(), 1);
   EXPECT_EQ(cmd.get_device().type(), vn::core::digital);

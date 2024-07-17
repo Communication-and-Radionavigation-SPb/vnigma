@@ -1,11 +1,10 @@
 #include <gtest/gtest.h>
+#include <iterator>
 #include <vnigma/buffer.hpp>
-
-#define Suite BufferTests
 
 namespace vn = vnigma;
 
-TEST(Suite, allocate_const_char_ptr) {
+TEST(BufferTests, allocate_const_char_ptr) {
   auto buf = vn::allocate_buffer("01234");
   EXPECT_TRUE(buf == "01234");
   EXPECT_TRUE(buf.get_anchor().has_value());
@@ -23,7 +22,16 @@ TEST(Suite, allocate_const_char_ptr) {
       << "::substr multiple times do not moves anchor value";
 }
 
-TEST(Suite, allocate_iterators) {
+TEST(BufferTests, nullterm_const_char_ptr) {
+  std::string s("1234\0");
+  ASSERT_EQ(std::distance(s.begin(), s.end()), 4);
+  ASSERT_EQ(s.size(), 4);
+  auto buf = vn::allocate_buffer(s);
+  EXPECT_TRUE(buf == "1234");
+  ASSERT_EQ(buf.size(), 4);
+}
+
+TEST(BufferTests, allocate_iterators) {
   std::string s{"01234"};
   auto buf = vn::allocate_buffer(s.begin(), s.end());
   EXPECT_TRUE(buf == "01234");
@@ -38,7 +46,7 @@ TEST(Suite, allocate_iterators) {
   EXPECT_TRUE(substr2.get_anchor().has_value());
 }
 
-TEST(Suite, view) {
+TEST(BufferTests, view) {
   std::string s{"01234"};
   vn::buffer buf{std::string_view{s}};
 
@@ -56,7 +64,7 @@ TEST(Suite, view) {
   EXPECT_FALSE(substr2.get_anchor().has_value());
 }
 
-TEST(Suite, literals) {
+TEST(BufferTests, literals) {
   using namespace vn::literals;
 
   auto buf = "01234"_mb;

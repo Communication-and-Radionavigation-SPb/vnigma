@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <vnigma/util/buffer_manip.h>
+#include "vnigma/buffer.hpp"
 
 namespace vn {
 using namespace vnigma;
@@ -14,17 +15,6 @@ struct buffer_manip_test {
 };
 
 class BufferManipTest : public ::testing::TestWithParam<buffer_manip_test> {};
-
-TEST_F(BufferManipTest, trim_buffer) {
-  vn::buffer buf = "content\r\n"_mb;
-  vn::buffer exp = "content"_mb;
-  EXPECT_EQ(vn::trim_buffer(buf), exp);
-
-  buf = "\r\n"_mb;
-  exp = ""_mb;
-
-  EXPECT_EQ(vn::trim_buffer(buf), exp);
-}
 
 TEST_P(BufferManipTest, skip) {
   auto param = GetParam();

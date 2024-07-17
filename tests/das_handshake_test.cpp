@@ -10,13 +10,10 @@ using namespace vnigma;
 using vnigma::das::handshake;
 }  // namespace vn
 
-using std::optional;
-using std::tuple;
-using std::variant;
 using namespace vn::literals;
 
 struct das_handshake_test {
-  vn::buffer buf;
+  std::string buf;
   vn::das::handshake::serial_number_t serialnum;
 };
 
@@ -39,24 +36,28 @@ TEST_F(HandshakeTests, traits) {
 
 TEST_P(HandshakeTests, from_buffer) {
   auto param = GetParam();
+  auto inbuf = vn::allocate_buffer(param.buf);
 
-  vn::handshake cmd(param.buf);
+  vn::handshake cmd(inbuf);
 
   auto buf = cmd.as_buffer();
+
   std::string payload(buf.begin(), buf.end());
-  std::string validation(param.buf.begin(), param.buf.end());
+
   EXPECT_EQ(cmd.serial_number(), param.serialnum);
-  EXPECT_EQ(payload, validation);
+  EXPECT_EQ(payload, param.buf);
 }
 
 TEST_P(HandshakeTests, as_buffer) {
   auto param = GetParam();
   vn::handshake cmd(param.serialnum);
 
-  EXPECT_EQ(cmd.as_buffer(), param.buf)
-      << cmd.as_buffer() << " is not equal to " << param.buf;
+  auto buf = cmd.as_buffer();
+  std::string actual(buf.begin(), buf.end());
+
+  EXPECT_EQ(actual, param.buf) << actual << " is not equal to " << param.buf;
 }
 
 INSTANTIATE_TEST_SUITE_P(DasHSH, HandshakeTests,
-                         ::testing::Values(das_handshake_test{
-                             "<DSXSN,ae56ywer\r\n"_mb, "ae56ywer"}));
+                         ::testing::Values(das_handshake_test{"<DSXSN,ae56ywer",
+                                                              "ae56ywer"}));

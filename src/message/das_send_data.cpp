@@ -1,13 +1,12 @@
 #include <vnigma/message/das_send_data.h>
 #include <vnigma/util/buffer_manip.h>
+#include <iostream>
 
 namespace vnigma { namespace das {
 
 send_data::send_data(data_variant data) : var_(std::move(data)) {}
 
 send_data::send_data(buffer buf, Type target_type) : var_(std::nullopt) {
-  // trim terminating simbols
-  buf = trim_buffer(buf);
 
   if (target_type == Type::serial) {
     var_.emplace(serial::data(skip(buf, 3)));

@@ -31,7 +31,9 @@ TEST_P(SetResetTest, as_buffer) {
   vn::set_reset cmd(param.uid, param.dev);
 
   auto buf = cmd.as_buffer();
-  EXPECT_EQ(buf, param.buf) << buf << " is not equal to " << param.buf;
+  auto actual = std::string(buf.begin(), buf.end());
+  auto expected = std::string(param.buf.begin(), param.buf.end());
+  EXPECT_EQ(actual, expected);
 }
 
 TEST_P(SetResetTest, from_buffer) {
@@ -40,13 +42,15 @@ TEST_P(SetResetTest, from_buffer) {
   vn::set_reset cmd(param.buf);
 
   auto buf = cmd.as_buffer();
-  EXPECT_EQ(buf, param.buf);
+
+  auto actual = std::string(buf.begin(), buf.end());
+  auto expected = std::string(param.buf.begin(), param.buf.end());
+  EXPECT_EQ(actual, expected);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DasSetReset, SetResetTest,
     ::testing::Values(
-        das_sr_p{100, "<DSSSR,100,1\r\n"_mb, vn::device(1, vn::core::serial)},
-        das_sr_p{100, "<DSASR,100,1\r\n"_mb, vn::device(1, vn::core::analog)},
-        das_sr_p{100, "<DSDSR,100,1\r\n"_mb,
-                 vn::device(1, vn::core::digital)}));
+        das_sr_p{100, "<DSSSR,100,1"_mb, vn::device(1, vn::core::serial)},
+        das_sr_p{100, "<DSASR,100,1"_mb, vn::device(1, vn::core::analog)},
+        das_sr_p{100, "<DSDSR,100,1"_mb, vn::device(1, vn::core::digital)}));
